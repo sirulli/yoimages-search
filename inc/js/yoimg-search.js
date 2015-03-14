@@ -9,21 +9,37 @@ jQuery(document).ready(function() {
 			template : wp.media.template('yoimages-search'),
 
 			events : {
-				'click .close' : 'hide'
+				'click .close' : 'hide',
+				'change .yoimg-search-query' : 'searchQuery',
+				'click .yoimg-search-query' : 'searchQuery',
+				'keyup .yoimg-search-query' : 'searchQuery'
+			},
+
+			searchQuery : function() {
+				this.model.set('searchQuery', event.target.value);
+			},
+			performSearch : function() {
+				var searchQuery = this.model.get('searchQuery');
+				if (searchQuery) {
+					console.log(searchQuery);
+				} else {
+					console.log('no search query');
+				}
 			},
 
 			initialize : function() {
 				_.defaults(this.options, {
-					message : '',
-					canClose : false
+					searchQuery : ''
 				});
 				if (_.isUndefined(this.options.postId)) {
 					this.options.postId = wp.media.view.settings.post.id;
 				}
+				this.model.on('change:searchQuery', this.performSearch, this);
 			},
 			prepare : function() {
+				var searchQuery = this.model.get('searchQuery');
 				var data = {
-					message : 'whuozzi'
+					searchQuery : searchQuery
 				};
 				return data;
 			},
@@ -67,7 +83,8 @@ jQuery(document).ready(function() {
 			},
 			yoimgSearch : function() {
 				this.content.set(new wp.media.view.YoimgSearch({
-					controller : this
+					controller : this,
+					model : this.state()
 				}));
 			}
 		});
