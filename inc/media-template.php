@@ -2,7 +2,10 @@
 function yoimg_print_media_templates() {
 	?>
 <script type="text/html" id="tmpl-yoimages-search">
-	<input type="text" name="yoimg-search-query" class="yoimg-search-query" value="{{ data.searchQuery }}" />
+	<label class="yoimages-search-label">
+		<input type="text" name="yoimg-search-query" class="yoimg-search-query" value="{{ data.searchQuery }}" />
+		<span class="spinner" />
+	</label>
 </script>
 <?php
 }

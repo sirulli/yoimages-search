@@ -16,6 +16,7 @@ if (is_admin ()) {
 }
 if (! function_exists ( 'yoimg_search_load_styles_and_scripts' )) {
 	function yoimg_search_load_styles_and_scripts($hook) {
+		wp_enqueue_style ( 'yoimg-search-css', YOIMG_SEARCH_URL . '/css/yoimg-search.css' );
 		wp_enqueue_script ( 'yoimg-search-js', YOIMG_SEARCH_URL . '/js/yoimg-search.js', array (
 				'media-views' 
 		), false, true );

@@ -19,12 +19,15 @@ jQuery(document).ready(function() {
 				this.model.set('searchQuery', event.target.value);
 			},
 			performSearch : function() {
+				clearTimeout(this.searchTimeout);
+				this.$('.yoimages-search-label .spinner').hide();
 				var searchQuery = this.model.get('searchQuery');
-				if (searchQuery) {
-					console.log(searchQuery);
-				} else {
-					console.log('no search query');
-				}
+				this.searchTimeout = setTimeout(_.bind(function() {
+					if (searchQuery && searchQuery.length > 1 && searchQuery === this.model.get('searchQuery')) {
+						this.$('.yoimages-search-label .spinner').show();
+						console.log(searchQuery);
+					}
+				}, this), 600);
 			},
 
 			initialize : function() {
