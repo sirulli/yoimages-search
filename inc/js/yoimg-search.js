@@ -1,4 +1,4 @@
-// FIXME: add media dialog error!
+//TODO: propagate search tab to all media library frames
 
 jQuery(document).ready(function() {
 	if (wp && wp.media && wp.media.view && wp.media.view.MediaFrame && wp.media.view.MediaFrame.Select) {
@@ -76,10 +76,17 @@ jQuery(document).ready(function() {
 			}
 		});
 		var mediaWithYoimgSearch = function(attributes) {
+			var originalAttrs = _.clone(attributes);
+			originalAttrs = _.defaults(originalAttrs || {}, {
+				frame : 'select'
+			});
 			var frame = window.originalWpMedia(attributes);
-			if (frame instanceof wp.media.view.MediaFrame.Select) {
+			if ('select' === originalAttrs.frame && wp.media.view.MediaFrame.SelectWithYoimgSearch) {
+				attributes = originalAttrs;
 				frame = new wp.media.view.MediaFrame.SelectWithYoimgSearch(attributes);
 			}
+			delete attributes.frame;
+			wp.media.frame = frame;
 			return frame;
 		};
 		jQuery.extend(mediaWithYoimgSearch, wp.media);
