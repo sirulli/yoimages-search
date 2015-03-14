@@ -2,7 +2,7 @@
 function yoimg_print_media_templates() {
 	?>
 <script type="text/html" id="tmpl-yoimages-search">
-	<div>wheee</div>
+	<div>wheee {{ data.message }}</div>
 </script>
 <?php
 }

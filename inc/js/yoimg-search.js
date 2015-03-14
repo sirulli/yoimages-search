@@ -22,13 +22,9 @@ jQuery(document).ready(function() {
 				}
 			},
 			prepare : function() {
-				var suggestedWidth = this.controller.state().get('suggestedWidth'), suggestedHeight = this.controller.state().get('suggestedHeight'), data = {};
-				data.message = this.options.message;
-				data.canClose = this.options.canClose;
-				if (suggestedWidth && suggestedHeight) {
-					data.suggestedWidth = suggestedWidth;
-					data.suggestedHeight = suggestedHeight;
-				}
+				var data = {
+					message : 'whuozzi'
+				};
 				return data;
 			},
 			dispose : function() {
