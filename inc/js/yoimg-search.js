@@ -20,12 +20,36 @@ jQuery(document).ready(function() {
 			},
 			performSearch : function() {
 				clearTimeout(this.searchTimeout);
-				this.$('.yoimages-search-label .spinner').hide();
 				var searchQuery = this.model.get('searchQuery');
 				this.searchTimeout = setTimeout(_.bind(function() {
 					if (searchQuery && searchQuery.length > 1 && searchQuery === this.model.get('searchQuery')) {
 						this.$('.yoimages-search-label .spinner').show();
 						console.log(searchQuery);
+						jQuery.ajax({
+							dataType : 'json',
+							url : 'http://www.splashbase.co/api/v1/images/search',
+							data : {
+								query : searchQuery
+							},
+							success : function(data) {
+								if (data && data.images && data.images.length > 0) {
+									for (var i = 0; i < data.images.length; i++) {
+										console.dir(data.images[i]);
+									}
+								} else {
+									// TODO handle no images found output
+									// messages
+									console.log('[WARNING] no images found');
+								}
+							},
+							error : function(jqXHR, textStatus, errorThrown) {
+								// TODO handle error output messages
+								console.log('[ERROR] ' + textStatus);
+							},
+							complete : function() {
+								jQuery('.yoimages-search-label .spinner').hide();
+							}
+						});
 					}
 				}, this), 600);
 			},
