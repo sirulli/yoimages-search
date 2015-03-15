@@ -14,11 +14,13 @@ function yoimg_print_media_templates() {
 	[TODO] error
 <# } else if ( data && data.foundImages && data.foundImages.length ) { #>
 	<ul>
-		<# _.each( data.foundImages, function(image) { #>
-			<li class="spinner yoimages-search-result" data-url="{{image.large_url}}">
-				<img src="{{image.url}}" data-url="{{image.large_url}}" />
-				<a class="check" href="#" title="Deselect" data-url="{{image.large_url}}">
-					<div class="media-modal-icon"></div>
+		<# _.each( data.foundImages, function(image) {
+			var dataUrl = image.large_url;
+			#>
+			<li class="spinner yoimages-search-result" data-url="{{dataUrl}}">
+				<img src="{{image.url}}" data-url="{{dataUrl}}" />
+				<a class="check" href="#" title="Deselect" data-url="{{dataUrl}}">
+					<div class="media-modal-icon" data-url="{{dataUrl}}"></div>
 				</a>
 			</li>
 		<# } ) #>

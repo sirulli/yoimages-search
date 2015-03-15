@@ -58,7 +58,7 @@ jQuery(document).ready(function() {
 				}
 			},
 			addImage : function(imgUrl) {
-				var selectedImages = this.model.get('yoimgSearchImages');
+				var selectedImages = _.clone(this.model.get('yoimgSearchImages'));
 				if (!this.options.multipleSelection) {
 					selectedImages = [];
 				}
@@ -66,7 +66,7 @@ jQuery(document).ready(function() {
 				this.model.set('yoimgSearchImages', selectedImages);
 			},
 			removeImage : function(imgUrl) {
-				var selectedImages = _.filter(this.model.get('yoimgSearchImages'), function(item) {
+				var selectedImages = _.filter(_.clone(this.model.get('yoimgSearchImages')), function(item) {
 					return item !== imgUrl;
 				});
 				this.model.set('yoimgSearchImages', selectedImages);
@@ -141,7 +141,8 @@ jQuery(document).ready(function() {
 				}).render();
 				this.results = new wp.media.view.YoimgSearchResults({
 					controller : this.controller,
-					model : this.model
+					model : this.model,
+					multipleSelection : true
 				}).render();
 				this.views.set([ this.search, this.results ]);
 			}
