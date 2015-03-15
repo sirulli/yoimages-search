@@ -15,7 +15,7 @@ function yoimg_print_media_templates() {
 <# } else if ( data && data.foundImages && data.foundImages.length ) { #>
 	<ul>
 		<# _.each( data.foundImages, function(image) { #>
-			<li data-url="{{image.url}}" data-large-url="{{image.large_url}}">{{image.url}}</li>
+			<li data-url="{{image.url}}" data-large-url="{{image.large_url}}"><img src="{{image.url}}" /></li>
 		<# } ) #>
 	</ul>
 <# } #>
