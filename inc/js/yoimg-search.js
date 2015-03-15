@@ -7,9 +7,20 @@ jQuery(document).ready(function() {
 			tagName : 'div',
 			className : 'yoimages-search-results',
 			template : wp.media.template('yoimages-search-results'),
+			events : {
+				'click .yoimages-search-result' : 'selectImage',
+				'click .yoimages-search-result-sel' : 'selectImage'
+			},
 			initialize : function() {
+				_.defaults(this.options, {
+					multipleSelection : false
+				});
+				if (!this.model.get('yoimgSearchFoundImages')) {
+					this.model.set('yoimgSearchImages', []);
+				}
 				this.model.on('change:yoimgSearchResults', this.showResults, this);
 				this.model.on('change:yoimgSearchFoundImages', this.render, this);
+				this.model.on('change:yoimgSearchImages', this.refreshSelections, this);
 			},
 			prepare : function() {
 				var foundImages = this.model.get('yoimgSearchFoundImages');
@@ -17,6 +28,11 @@ jQuery(document).ready(function() {
 					foundImages : foundImages
 				};
 				return data;
+			},
+			render : function() {
+				wp.media.View.prototype.render.apply(this, arguments);
+				this.refreshSelections();
+				return this;
 			},
 			showResults : function() {
 				var results = this.model.get('yoimgSearchResults');
@@ -26,6 +42,40 @@ jQuery(document).ready(function() {
 					this.model.set('yoimgSearchFoundImages', results.textStatus);
 				} else {
 					this.model.set('yoimgSearchFoundImages', 0);
+				}
+			},
+			selectImage : function(e) {
+				if (e && e.target) {
+					e.preventDefault();
+					var $el = jQuery(e.target);
+					var imgUrl = $el.attr('data-url');
+					if (_.contains(this.model.get('yoimgSearchImages'), imgUrl)) {
+						this.removeImage(imgUrl);
+					} else {
+						this.addImage(imgUrl);
+					}
+					return false;
+				}
+			},
+			addImage : function(imgUrl) {
+				var selectedImages = this.model.get('yoimgSearchImages');
+				if (!this.options.multipleSelection) {
+					selectedImages = [];
+				}
+				selectedImages.push(imgUrl);
+				this.model.set('yoimgSearchImages', selectedImages);
+			},
+			removeImage : function(imgUrl) {
+				var selectedImages = _.filter(this.model.get('yoimgSearchImages'), function(item) {
+					return item !== imgUrl;
+				});
+				this.model.set('yoimgSearchImages', selectedImages);
+			},
+			refreshSelections : function() {
+				var selectedImages = this.model.get('yoimgSearchImages');
+				var searchResults = this.$el.find('.yoimages-search-result').removeClass('selected');
+				for (var i = 0; i < selectedImages.length; i++) {
+					searchResults.filter('[data-url="' + selectedImages[i] + '"]').addClass('selected');
 				}
 			}
 		});
@@ -37,6 +87,13 @@ jQuery(document).ready(function() {
 				'change .yoimg-search-query' : 'newSearchQuery',
 				'click .yoimg-search-query' : 'newSearchQuery',
 				'keyup .yoimg-search-query' : 'newSearchQuery'
+			},
+			prepare : function() {
+				var searchQuery = this.model.get('yoimgSearchQuery');
+				var data = {
+					searchQuery : searchQuery
+				};
+				return data;
 			},
 			newSearchQuery : function() {
 				this.model.set('yoimgSearchQuery', event.target.value);

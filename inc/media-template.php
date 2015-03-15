@@ -15,7 +15,12 @@ function yoimg_print_media_templates() {
 <# } else if ( data && data.foundImages && data.foundImages.length ) { #>
 	<ul>
 		<# _.each( data.foundImages, function(image) { #>
-			<li data-url="{{image.url}}" data-large-url="{{image.large_url}}"><img src="{{image.url}}" /></li>
+			<li class="spinner yoimages-search-result" data-url="{{image.large_url}}">
+				<img src="{{image.url}}" data-url="{{image.large_url}}" />
+				<a class="check" href="#" title="Deselect" data-url="{{image.large_url}}">
+					<div class="media-modal-icon"></div>
+				</a>
+			</li>
 		<# } ) #>
 	</ul>
 <# } #>
