@@ -142,7 +142,7 @@ jQuery(document).ready(function() {
 				this.results = new wp.media.view.YoimgSearchResults({
 					controller : this.controller,
 					model : this.model,
-					multipleSelection : true
+					multipleSelection : false
 				}).render();
 				this.views.set([ this.search, this.results ]);
 			}
