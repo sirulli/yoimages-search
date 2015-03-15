@@ -3,28 +3,51 @@
 jQuery(document).ready(function() {
 	if (wp && wp.media && wp.media.view && wp.media.view.MediaFrame && wp.media.view.MediaFrame.Select) {
 		window.originalWpMedia = wp.media;
-		wp.media.view.YoimgSearch = wp.media.View.extend({
+		wp.media.view.YoimgSearchResults = wp.media.View.extend({
 			tagName : 'div',
-			className : 'yoimages-search',
+			className : 'yoimages-search-results',
+			template : wp.media.template('yoimages-search-results'),
+			initialize : function() {
+				this.model.on('change:yoimgSearchResults', this.showResults, this);
+				this.model.on('change:yoimgSearchFoundImages', this.render, this);
+			},
+			prepare : function() {
+				var foundImages = this.model.get('yoimgSearchFoundImages');
+				var data = {
+					foundImages : foundImages
+				};
+				return data;
+			},
+			showResults : function() {
+				var results = this.model.get('yoimgSearchResults');
+				if (results && results.images && results.images.length > 0) {
+					this.model.set('yoimgSearchFoundImages', results.images);
+				} else if (results && results.errorThrown) {
+					this.model.set('yoimgSearchFoundImages', results.textStatus);
+				} else {
+					this.model.set('yoimgSearchFoundImages', 0);
+				}
+			}
+		});
+		wp.media.view.YoimgSearchQuery = wp.media.View.extend({
+			tagName : 'div',
+			className : 'yoimages-search-query',
 			template : wp.media.template('yoimages-search'),
-
 			events : {
-				'click .close' : 'hide',
-				'change .yoimg-search-query' : 'searchQuery',
-				'click .yoimg-search-query' : 'searchQuery',
-				'keyup .yoimg-search-query' : 'searchQuery'
+				'change .yoimg-search-query' : 'newSearchQuery',
+				'click .yoimg-search-query' : 'newSearchQuery',
+				'keyup .yoimg-search-query' : 'newSearchQuery'
 			},
-
-			searchQuery : function() {
-				this.model.set('searchQuery', event.target.value);
+			newSearchQuery : function() {
+				this.model.set('yoimgSearchQuery', event.target.value);
 			},
-			performSearch : function() {
+			doSearch : function() {
 				clearTimeout(this.searchTimeout);
-				var searchQuery = this.model.get('searchQuery');
+				var searchQuery = this.model.get('yoimgSearchQuery');
 				this.searchTimeout = setTimeout(_.bind(function() {
-					if (searchQuery && searchQuery.length > 1 && searchQuery === this.model.get('searchQuery')) {
-						this.$('.yoimages-search-label .spinner').show();
-						console.log(searchQuery);
+					if (searchQuery && searchQuery.length > 1 && searchQuery === this.model.get('yoimgSearchQuery')) {
+						var spinner = this.$('.yoimages-search-label .spinner').show();
+						var model = this.model;
 						jQuery.ajax({
 							dataType : 'json',
 							url : 'http://www.splashbase.co/api/v1/images/search',
@@ -32,66 +55,38 @@ jQuery(document).ready(function() {
 								query : searchQuery
 							},
 							success : function(data) {
-								if (data && data.images && data.images.length > 0) {
-									for (var i = 0; i < data.images.length; i++) {
-										console.dir(data.images[i]);
-									}
-								} else {
-									// TODO handle no images found output
-									// messages
-									console.log('[WARNING] no images found');
-								}
+								model.set('yoimgSearchResults', data);
 							},
 							error : function(jqXHR, textStatus, errorThrown) {
-								// TODO handle error output messages
-								console.log('[ERROR] ' + textStatus);
+								model.set('yoimgSearchResults', {
+									textStatus : textStatus,
+									errorThrown : errorThrown
+								});
 							},
 							complete : function() {
-								jQuery('.yoimages-search-label .spinner').hide();
+								spinner.hide();
 							}
 						});
 					}
-				}, this), 600);
+				}, this), 1000);
 			},
-
 			initialize : function() {
-				_.defaults(this.options, {
-					searchQuery : ''
-				});
-				if (_.isUndefined(this.options.postId)) {
-					this.options.postId = wp.media.view.settings.post.id;
-				}
-				this.model.on('change:searchQuery', this.performSearch, this);
-			},
-			prepare : function() {
-				var searchQuery = this.model.get('searchQuery');
-				var data = {
-					searchQuery : searchQuery
-				};
-				return data;
-			},
-			dispose : function() {
-				if (this.disposing) {
-					return wp.media.View.prototype.dispose.apply(this, arguments);
-				}
-				this.disposing = true;
-				return this.remove();
-			},
-			remove : function() {
-				var result = wp.media.View.prototype.remove.apply(this, arguments);
-				_.defer(_.bind(this.refresh, this));
-				return result;
-			},
-			refresh : function() {
-			},
-			ready : function() {
-				return this;
-			},
-			show : function() {
-				this.$el.removeClass('hidden');
-			},
-			hide : function() {
-				this.$el.addClass('hidden');
+				this.model.on('change:yoimgSearchQuery', this.doSearch, this);
+			}
+		});
+		wp.media.view.YoimgSearch = wp.media.View.extend({
+			tagName : 'div',
+			className : 'yoimages-search',
+			initialize : function() {
+				this.search = new wp.media.view.YoimgSearchQuery({
+					controller : this.controller,
+					model : this.model
+				}).render();
+				this.results = new wp.media.view.YoimgSearchResults({
+					controller : this.controller,
+					model : this.model
+				}).render();
+				this.views.set([ this.search, this.results ]);
 			}
 		});
 		wp.media.view.MediaFrame.SelectWithYoimgSearch = wp.media.view.MediaFrame.Select.extend({
