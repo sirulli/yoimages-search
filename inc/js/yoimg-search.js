@@ -12,9 +12,6 @@ jQuery(document).ready(function() {
 				'click .yoimages-search-result-sel' : 'selectImage'
 			},
 			initialize : function() {
-				_.defaults(this.options, {
-					multipleSelection : false
-				});
 				if (!this.model.get('yoimgSearchFoundImages')) {
 					this.model.set('yoimgSearchImages', []);
 				}
@@ -59,7 +56,7 @@ jQuery(document).ready(function() {
 			},
 			addImage : function(imgUrl) {
 				var selectedImages = _.clone(this.model.get('yoimgSearchImages'));
-				if (!this.options.multipleSelection) {
+				if (!this.options.multiple) {
 					selectedImages = [];
 				}
 				selectedImages.push(imgUrl);
@@ -142,14 +139,24 @@ jQuery(document).ready(function() {
 				this.results = new wp.media.view.YoimgSearchResults({
 					controller : this.controller,
 					model : this.model,
-					multipleSelection : false
+					options : this.options
 				}).render();
 				this.views.set([ this.search, this.results ]);
+			},
+			dispose : function() {
+				this.controller.views.get('.media-frame-toolbar')[0].options.event = this._defaultSelectToolbarEvent;
+				return wp.media.View.prototype.dispose.apply(this, arguments);
+			},
+			render : function() {
+				this._defaultSelectToolbarEvent = this.controller.views.get('.media-frame-toolbar')[0].options.event;
+				this.controller.views.get('.media-frame-toolbar')[0].options.event = 'yoimg-search-select';
+				return wp.media.View.prototype.render.apply(this, arguments);
 			}
 		});
 		wp.media.view.MediaFrame.SelectWithYoimgSearch = wp.media.view.MediaFrame.Select.extend({
 			bindHandlers : function() {
 				this.on('content:render:yosearch', this.yoimgSearch, this);
+				this.on('yoimg-search-select', this.yoimgSearchSelect, this);
 				wp.media.view.MediaFrame.Select.prototype.bindHandlers.call(this);
 			},
 			browseRouter : function(routerView) {
@@ -162,10 +169,23 @@ jQuery(document).ready(function() {
 				});
 			},
 			yoimgSearch : function() {
+				this.$el.removeClass('hide-toolbar');
 				this.content.set(new wp.media.view.YoimgSearch({
 					controller : this,
-					model : this.state()
+					model : this.state(),
+					options : this.options
 				}));
+			},
+			yoimgSearchSelect : function() {
+				console.log('TODO: upload and set and handle errors');
+				var selectedImages = this.state().get('yoimgSearchImages');
+				if (selectedImages && selectedImages.length > 0) {
+					for (var i = 0; i < selectedImages.length; i++) {
+						console.log(selectedImages[i]);
+					}
+				} else {
+					console.log('TODO: handle empty selection');
+				}
 			}
 		});
 		var mediaWithYoimgSearch = function(attributes) {
