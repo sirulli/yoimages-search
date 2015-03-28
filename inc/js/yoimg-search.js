@@ -144,13 +144,39 @@ jQuery(document).ready(function() {
 				this.views.set([ this.search, this.results ]);
 			},
 			dispose : function() {
-				this.controller.views.get('.media-frame-toolbar')[0].options.event = this._defaultSelectToolbarEvent;
+				this.model.set('yoimgSearchActive', false);
+				this._toolbar.options.event = this._defaultToolbarEvent;
 				return wp.media.View.prototype.dispose.apply(this, arguments);
 			},
 			render : function() {
-				this._defaultSelectToolbarEvent = this.controller.views.get('.media-frame-toolbar')[0].options.event;
-				this.controller.views.get('.media-frame-toolbar')[0].options.event = 'yoimg-search-select';
+				this.model.set('yoimgSearchActive', true);
+				this._toolbar = this.controller.views.get('.media-frame-toolbar')[0];
+				this._defaultToolbarEvent = this._toolbar.options.event;
+				this._toolbar.options.event = 'yoimg-search-select';
 				return wp.media.View.prototype.render.apply(this, arguments);
+			}
+		});
+		wp.media.view.Toolbar.SelectWithYoimgSearch = wp.media.view.Toolbar.Select.extend({
+			initialize : function() {
+				wp.media.view.Toolbar.Select.prototype.initialize.call(this);
+				var state = this.controller.state();
+				state.on('change:yoimgSearchActive', this.refresh, this);
+				state.on('change:yoimgSearchImages', this.refresh, this);
+			},
+			refresh : function() {
+				wp.media.view.Toolbar.Select.prototype.refresh.call(this);
+				var state = this.controller.state();
+				var yoimgSearchActive = state.get('yoimgSearchActive') === true;
+				if (yoimgSearchActive) {
+					var selectedImages = state.get('yoimgSearchImages');
+					var active = selectedImages && selectedImages.length;
+					_.each(this._views, function(button) {
+						if (!button.model || !button.options || !button.options.requires) {
+							return;
+						}
+						button.model.set('disabled', !active);
+					});
+				}
 			}
 		});
 		wp.media.view.MediaFrame.SelectWithYoimgSearch = wp.media.view.MediaFrame.Select.extend({
@@ -167,6 +193,11 @@ jQuery(document).ready(function() {
 						priority : 60
 					}
 				});
+			},
+			createSelectToolbar : function(toolbar, options) {
+				options = options || this.options.button || {};
+				options.controller = this;
+				toolbar.view = new wp.media.view.Toolbar.SelectWithYoimgSearch(options);
 			},
 			yoimgSearch : function() {
 				this.$el.removeClass('hide-toolbar');
