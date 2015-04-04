@@ -1,13 +1,18 @@
 <?php
-function yoimg_print_media_templates() {
-	?>
-<script type="text/html" id="tmpl-yoimages-search">
+if (! defined ( 'ABSPATH' )) {
+	die ( 'No script kiddies please!' );
+}
+
+if (! function_exists ( 'yoimg_print_media_templates' )) {
+	function yoimg_print_media_templates() {
+		?>
+	<script type="text/html" id="tmpl-yoimages-search">
 	<label class="yoimages-search-label">
 		<input type="text" name="yoimg-search-query" class="yoimg-search-query" value="{{ data.searchQuery }}" />
 		<span class="spinner" />
 	</label>
-</script>
-<script type="text/html" id="tmpl-yoimages-search-results">
+	</script>
+	<script type="text/html" id="tmpl-yoimages-search-results">
 <# if ( data && data.foundImages === 0 ) { #>
 	[TODO] no results found
 <# } else if ( data && data.foundImages === 'error' ) { #>
@@ -26,7 +31,8 @@ function yoimg_print_media_templates() {
 		<# } ) #>
 	</ul>
 <# } #>
-</script>
-<?php
+	</script>
+	<?php
+	}
+	add_action ( 'admin_footer', 'yoimg_print_media_templates' );
 }
-add_action ( 'admin_footer', 'yoimg_print_media_templates' );
