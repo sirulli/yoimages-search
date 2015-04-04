@@ -3,8 +3,8 @@ if (! defined ( 'ABSPATH' )) {
 	die ( 'No script kiddies please!' );
 }
 
-if (! function_exists ( 'yoimg_print_media_templates' )) {
-	function yoimg_print_media_templates() {
+if (! function_exists ( 'yoimg_search_print_media_templates' )) {
+	function yoimg_search_print_media_templates() {
 		?>
 	<script type="text/html" id="tmpl-yoimages-search">
 	<label class="yoimages-search-label">
@@ -34,5 +34,5 @@ if (! function_exists ( 'yoimg_print_media_templates' )) {
 	</script>
 	<?php
 	}
-	add_action ( 'admin_footer', 'yoimg_print_media_templates' );
+	add_action ( 'admin_footer', 'yoimg_search_print_media_templates' );
 }
