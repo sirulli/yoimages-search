@@ -144,15 +144,17 @@ jQuery(document).ready(function() {
 				this.views.set([ this.search, this.results ]);
 			},
 			dispose : function() {
+				this._toolbar.options = _.clone(this._defaultToolbarOptions);
 				this.model.set('yoimgSearchActive', false);
-				this._toolbar.options.event = this._defaultToolbarEvent;
 				return wp.media.View.prototype.dispose.apply(this, arguments);
 			},
 			render : function() {
-				this.model.set('yoimgSearchActive', true);
 				this._toolbar = this.controller.views.get('.media-frame-toolbar')[0];
-				this._defaultToolbarEvent = this._toolbar.options.event;
+				this._defaultToolbarOptions = _.clone(this._toolbar.options);
 				this._toolbar.options.event = 'yoimg-search-select';
+				this._toolbar.options.text = 'TODO text upload';
+				this._toolbar.options.close = false;
+				this.model.set('yoimgSearchActive', true);
 				return wp.media.View.prototype.render.apply(this, arguments);
 			}
 		});
@@ -177,6 +179,13 @@ jQuery(document).ready(function() {
 						button.model.set('disabled', !active);
 					});
 				}
+				var text = this.options.text;
+				_.each(this._views, function(button) {
+					if (!button || !button.model) {
+						return;
+					}
+					button.model.set('text', text);
+				});
 			}
 		});
 		wp.media.view.MediaFrame.SelectWithYoimgSearch = wp.media.view.MediaFrame.Select.extend({
