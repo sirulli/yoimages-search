@@ -223,6 +223,8 @@ jQuery(document).ready(function() {
 					for (var i = 0; i < selectedImages.length; i++) {
 						console.log(selectedImages[i]);
 					}
+					// TODO upload and select before changing mode
+					this.content.mode('browse');
 				} else {
 					console.log('TODO: handle empty selection');
 				}
