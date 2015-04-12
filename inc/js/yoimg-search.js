@@ -217,8 +217,13 @@ jQuery(document).ready(function() {
 				}));
 			},
 			yoimgSearchSelectCb : function(res) {
-				console.log(res.postId);
-				this.content.mode('browse');
+				if (res && res.length) {
+					for (var i = 0; i < res.length; i++) {
+						var resItem = res[i];
+						console.log(resItem.imageUrl + ' ' + resItem.imageFilename);
+					}
+					this.content.mode('browse');
+				}
 			},
 			yoimgSearchSelect : function() {
 				console.log('TODO: upload and set and handle errors');
