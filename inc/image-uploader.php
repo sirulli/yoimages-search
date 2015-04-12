@@ -23,9 +23,7 @@ function yoimg_search_upload_images() {
 					$result ['imageFilename'] = $downloaded_image;
 					$downloaded_image_info = pathinfo ( $downloaded_image );
 					$downloaded_image_basename = $downloaded_image_info ['basename'];
-					if (strpos ( $downloaded_image_basename, '.' ) === false) {
-						$downloaded_image_basename .= '.gif';
-					}
+					$downloaded_image_basename .= '.gif';
 					$downloaded_image_filetype = wp_check_filetype_and_ext ( $downloaded_image, $downloaded_image_basename, false );
 					if (! wp_match_mime_types ( 'image', $downloaded_image_filetype ['type'] )) {
 						$result ['errorMessage'] = __ ( 'The uploaded file is not a valid image. Please try again.' );
@@ -52,7 +50,23 @@ function yoimg_search_upload_images() {
 								$url = $uploads ['url'] . '/' . $filename;
 								$result ['imageFilename'] = $new_file;
 								$result ['imageUrl'] = $url;
-								// TODO create attachment
+								$attachment = array (
+										'post_mime_type' => $downloaded_image_filetype ['type'],
+										'guid' => $url,
+										'post_parent' => $post_id,
+										'post_title' => preg_replace ( '/\.[^.]+$/', '', basename ( $filename ) ),
+										'post_content' => '',
+										'post_status' => 'inherit' 
+								);
+								$image_id = wp_insert_attachment ( $attachment, $new_file, $post_id );
+								if (! is_wp_error ( $image_id )) {
+									require_once (ABSPATH . 'wp-admin/includes/image.php');
+									wp_update_attachment_metadata ( $image_id, wp_generate_attachment_metadata ( $image_id, $new_file ) );
+									$result ['imageId'] = $image_id;
+								} else {
+									$result ['errorMessage'] = 'cannot insert attachment';
+									status_header ( 503 );
+								}
 							}
 						} else {
 							$result ['errorMessage'] = __ ( $uploads ['error'] );
