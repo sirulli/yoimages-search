@@ -216,15 +216,20 @@ jQuery(document).ready(function() {
 					options : this.options
 				}));
 			},
+			yoimgSearchSelectCb : function(res) {
+				console.log(res.postId);
+				this.content.mode('browse');
+			},
 			yoimgSearchSelect : function() {
 				console.log('TODO: upload and set and handle errors');
 				var selectedImages = this.state().get('yoimgSearchImages');
 				if (selectedImages && selectedImages.length > 0) {
-					for (var i = 0; i < selectedImages.length; i++) {
-						console.log(selectedImages[i]);
-					}
-					// TODO upload and select before changing mode
-					this.content.mode('browse');
+					var data = {
+						'action' : 'yoimg_search_upload_images',
+						'postId' : wp.media.view.settings.post.id,
+						'imagesUrls' : selectedImages
+					};
+					jQuery.post(ajaxurl, data, _.bind(this.yoimgSearchSelectCb, this));
 				} else {
 					console.log('TODO: handle empty selection');
 				}

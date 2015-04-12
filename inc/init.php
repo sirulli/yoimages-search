@@ -21,5 +21,6 @@ if (is_admin ()) {
 	if (YOIMG_SEARCH_ENABLED) {
 		add_action ( 'admin_enqueue_scripts', 'yoimg_search_load_styles_and_scripts' );
 		require_once (YOIMG_SEARCH_PATH . '/media-template.php');
+		require_once (YOIMG_SEARCH_PATH . '/image-uploader.php');
 	}
 }
