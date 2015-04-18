@@ -220,9 +220,14 @@ jQuery(document).ready(function() {
 				if (res && res.length) {
 					for (var i = 0; i < res.length; i++) {
 						var resItem = res[i];
-						console.log(resItem.imageUrl + ' ' + resItem.imageFilename);
+						// TODO it's specific for featured image: make it more
+						// general!
+						wp.media.view.settings.post.featuredImageId = resItem.imageId;
 					}
+					this.state().updateSelection();
 					this.content.mode('browse');
+				} else {
+					// TODO handle error messages
 				}
 			},
 			yoimgSearchSelect : function() {
