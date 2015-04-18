@@ -8,7 +8,7 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 		?>
 	<script type="text/html" id="tmpl-yoimages-search">
 	<label class="yoimages-search-label">
-		<input type="text" name="yoimg-search-query" class="yoimg-search-query" value="{{ data.searchQuery }}" />
+		<input type="text" name="yoimg-search-query" class="yoimg-search-query" value="{{ data.searchQuery }}" placeholder="<?php _e('[TODO] search free stock images from splashbase.co', YOIMG_DOMAIN); ?>" />
 		<span class="spinner" />
 	</label>
 	</script>
