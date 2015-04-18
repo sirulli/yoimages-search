@@ -246,8 +246,6 @@ jQuery(document).ready(function() {
 					this.state().set('yoimgSearchSelecting', true);
 					this.content.view.$el.find('.media-frame-toolbar .media-toolbar-primary.search-form').prepend('<span class="spinner yoimages-search-spinner"></span>');
 					jQuery.post(ajaxurl, data, _.bind(this.yoimgSearchSelectCb, this));
-				} else {
-					console.log('TODO: handle empty selection');
 				}
 			}
 		});

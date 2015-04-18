@@ -14,9 +14,21 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 	</script>
 	<script type="text/html" id="tmpl-yoimages-search-results">
 <# if ( data && data.foundImages === 0 ) { #>
-	[TODO] no results found
+	<div class="yoimages-search-label error warning">
+		<p>
+			<?php
+			_e('[TODO] no results found', YOIMG_DOMAIN);
+			?>
+		</p>
+	</div>
 <# } else if ( data && data.foundImages === 'error' ) { #>
-	[TODO] error
+	<div class="yoimages-search-label error">
+		<p>
+			<?php
+			_e('[TODO] error', YOIMG_DOMAIN);
+			?>
+		</p>
+	</div>
 <# } else if ( data && data.foundImages && data.foundImages.length ) { #>
 	<ul>
 		<# _.each( data.foundImages, function(image) {

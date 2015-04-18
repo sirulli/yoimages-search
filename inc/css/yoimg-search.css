@@ -1,7 +1,7 @@
 .yoimages-search-label {
 	display: block;
 	position: relative;
-	padding: 16px;
+	padding: 16px 1%;
 	margin: 0;
 	z-index: 250;
 	background: #fff;
@@ -24,7 +24,7 @@
 }
 
 .yoimages-search-results ul {
-	margin: 0 16px 16px 16px;
+	margin: 0;
 	padding: 0;
 }
 
@@ -84,4 +84,8 @@
 	display: inline-block;
 	float: left;
 	margin-top: 20px;
+}
+
+.yoimages-search-label.error.warning {
+	border-left-color: #FFFF00;
 }
