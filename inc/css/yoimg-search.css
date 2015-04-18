@@ -79,3 +79,9 @@
 .yoimages-search-results ul li.spinner.selected .check:hover div {
 	background-position: -60px 0;
 }
+
+.media-frame .spinner.yoimages-search-spinner {
+	display: inline-block;
+	float: left;
+	margin-top: 20px;
+}

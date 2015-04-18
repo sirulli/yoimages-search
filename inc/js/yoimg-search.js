@@ -164,6 +164,7 @@ jQuery(document).ready(function() {
 				var state = this.controller.state();
 				state.on('change:yoimgSearchActive', this.refresh, this);
 				state.on('change:yoimgSearchImages', this.refresh, this);
+				state.on('change:yoimgSearchSelecting', this.refresh, this);
 			},
 			refresh : function() {
 				wp.media.view.Toolbar.Select.prototype.refresh.call(this);
@@ -171,7 +172,8 @@ jQuery(document).ready(function() {
 				var yoimgSearchActive = state.get('yoimgSearchActive') === true;
 				if (yoimgSearchActive) {
 					var selectedImages = state.get('yoimgSearchImages');
-					var active = selectedImages && selectedImages.length;
+					var selectingImages = state.get('yoimgSearchSelecting');
+					var active = selectedImages && selectedImages.length && !selectingImages;
 					_.each(this._views, function(button) {
 						if (!button.model || !button.options || !button.options.requires) {
 							return;
@@ -217,6 +219,8 @@ jQuery(document).ready(function() {
 				}));
 			},
 			yoimgSearchSelectCb : function(res) {
+				this.state().set('yoimgSearchSelecting', false);
+				this.content.view.$el.find('.yoimages-search-spinner').remove();
 				if (res && res.length) {
 					for (var i = 0; i < res.length; i++) {
 						var resItem = res[i];
@@ -231,7 +235,7 @@ jQuery(document).ready(function() {
 				}
 			},
 			yoimgSearchSelect : function() {
-				console.log('TODO: upload and set and handle errors');
+				console.log('TODO: handle errors');
 				var selectedImages = this.state().get('yoimgSearchImages');
 				if (selectedImages && selectedImages.length > 0) {
 					var data = {
@@ -239,6 +243,8 @@ jQuery(document).ready(function() {
 						'postId' : wp.media.view.settings.post.id,
 						'imagesUrls' : selectedImages
 					};
+					this.state().set('yoimgSearchSelecting', true);
+					this.content.view.$el.find('.media-frame-toolbar .media-toolbar-primary.search-form').prepend('<span class="spinner yoimages-search-spinner"></span>');
 					jQuery.post(ajaxurl, data, _.bind(this.yoimgSearchSelectCb, this));
 				} else {
 					console.log('TODO: handle empty selection');
