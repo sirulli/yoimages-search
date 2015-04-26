@@ -28,7 +28,7 @@
 	padding: 0;
 }
 
-.yoimages-search-results ul li.spinner {
+.yoimages-search-results ul li.yoimages-search-result {
 	background-position: 50%;
 	float: left;
 	width: 18%;
@@ -39,23 +39,24 @@
 	opacity: 1;
 	filter: alpha(opacity = 100);
 	position: relative;
+	visibility: visible;
 }
 
-.yoimages-search-results ul li.spinner.selected {
+.yoimages-search-results ul li.yoimages-search-result.selected {
 	-webkit-box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px #1e8cbe;
 	box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px #1e8cbe;
 }
 
-.yoimages-search-results ul li.spinner img {
+.yoimages-search-results ul li.yoimages-search-result img {
 	width: 100%;
 	cursor: pointer;
 }
 
-.yoimages-search-results ul li.spinner .check {
+.yoimages-search-results ul li.yoimages-search-result .check {
 	display: none;
 }
 
-.yoimages-search-results ul li.spinner.selected .check {
+.yoimages-search-results ul li.yoimages-search-result.selected .check {
 	display: block;
 	position: absolute;
 	top: 0;
@@ -69,14 +70,16 @@
 	box-shadow: 0 0 0 1px #fff, 0 0 0 2px #1e8cbe;
 }
 
-.yoimages-search-results ul li.spinner.selected .check div {
+.yoimages-search-results ul li.yoimages-search-result.selected .check div
+	{
 	background-position: -21px 0;
 	height: 15px;
 	width: 15px;
 	margin: 5px;
 }
 
-.yoimages-search-results ul li.spinner.selected .check:hover div {
+.yoimages-search-results ul li.yoimages-search-result.selected .check:hover div
+	{
 	background-position: -60px 0;
 }
 
@@ -88,4 +91,9 @@
 
 .yoimages-search-label.error.warning {
 	border-left-color: #FFFF00;
+}
+
+.yoimages-search-label .spinner.is-active, .media-frame .spinner.yoimages-search-spinner.is-active
+	{
+	display: inline-block;
 }

@@ -103,7 +103,7 @@ jQuery(document).ready(function() {
 				var searchQuery = this.model.get('yoimgSearchQuery');
 				this.searchTimeout = setTimeout(_.bind(function() {
 					if (searchQuery && searchQuery.length > 1 && searchQuery === this.model.get('yoimgSearchQuery')) {
-						var spinner = this.$('.yoimages-search-label .spinner').show();
+						var spinner = this.$('.yoimages-search-label .spinner').addClass('is-active');
 						var model = this.model;
 						jQuery.ajax({
 							dataType : 'json',
@@ -125,7 +125,7 @@ jQuery(document).ready(function() {
 								});
 							},
 							complete : function() {
-								spinner.hide();
+								spinner.removeClass('is-active');
 							}
 						});
 					}
@@ -251,7 +251,7 @@ jQuery(document).ready(function() {
 						'imagesUrls' : selectedImages
 					};
 					this.state().set('yoimgSearchSelecting', true);
-					this.content.view.$el.find('.media-frame-toolbar .media-toolbar-primary.search-form').prepend('<span class="spinner yoimages-search-spinner"></span>');
+					this.content.view.$el.find('.media-frame-toolbar .media-toolbar-primary.search-form').prepend('<span class="spinner is-active yoimages-search-spinner"></span>');
 					jQuery.post(ajaxurl, data, _.bind(this.yoimgSearchSelectCb, this));
 				}
 			}
