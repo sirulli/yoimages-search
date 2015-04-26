@@ -21,8 +21,10 @@ jQuery(document).ready(function() {
 			},
 			prepare : function() {
 				var foundImages = this.model.get('yoimgSearchFoundImages');
+				var searchQuery = this.model.get('yoimgSearchQuery');
 				var data = {
-					foundImages : foundImages
+					foundImages : foundImages,
+					searchQuery : searchQuery
 				};
 				return data;
 			},
@@ -39,6 +41,7 @@ jQuery(document).ready(function() {
 					this.model.set('yoimgSearchFoundImages', results.textStatus);
 				} else {
 					this.model.set('yoimgSearchFoundImages', 0);
+					this.render();
 				}
 			},
 			selectImage : function(e) {
@@ -109,6 +112,10 @@ jQuery(document).ready(function() {
 								query : searchQuery
 							},
 							success : function(data) {
+								if (!data) {
+									data = {};
+								}
+								data.date = new Date();
 								model.set('yoimgSearchResults', data);
 							},
 							error : function(jqXHR, textStatus, errorThrown) {
@@ -152,7 +159,7 @@ jQuery(document).ready(function() {
 				this._toolbar = this.controller.views.get('.media-frame-toolbar')[0];
 				this._defaultToolbarOptions = _.clone(this._toolbar.options);
 				this._toolbar.options.event = 'yoimg-search-select';
-				this._toolbar.options.text = 'TODO text upload';
+				this._toolbar.options.text = l10n.uploadImageButton;
 				this._toolbar.options.close = false;
 				this.model.set('yoimgSearchActive', true);
 				return wp.media.View.prototype.render.apply(this, arguments);
@@ -200,7 +207,7 @@ jQuery(document).ready(function() {
 				wp.media.view.MediaFrame.Select.prototype.browseRouter.call(this, routerView);
 				routerView.set({
 					yosearch : {
-						text : 'Search', // TODO l10n.searchImagesTitle
+						text : l10n.searchImagesTitle,
 						priority : 60
 					}
 				});

@@ -8,7 +8,7 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 		?>
 	<script type="text/html" id="tmpl-yoimages-search">
 	<label class="yoimages-search-label">
-		<input type="text" name="yoimg-search-query" class="yoimg-search-query" value="{{ data.searchQuery }}" placeholder="<?php _e('[TODO] search free stock images from splashbase.co', YOIMG_DOMAIN); ?>" />
+		<input type="text" name="yoimg-search-query" class="yoimg-search-query" value="{{ data.searchQuery }}" placeholder="<?php _e('Search free stock images from splashbase.co', YOIMG_DOMAIN); ?>" />
 		<span class="spinner" />
 	</label>
 	</script>
@@ -17,15 +17,15 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 	<div class="yoimages-search-label error warning">
 		<p>
 			<?php
-			_e('[TODO] no results found', YOIMG_DOMAIN);
-			?>
+			_e('No results found for:', YOIMG_DOMAIN);
+			?> <b>{{ data.searchQuery }}</b>
 		</p>
 	</div>
 <# } else if ( data && data.foundImages === 'error' ) { #>
 	<div class="yoimages-search-label error">
 		<p>
 			<?php
-			_e('[TODO] error', YOIMG_DOMAIN);
+			_e('An error has occurred, please try again later or check the console logs for further information', YOIMG_DOMAIN);
 			?>
 		</p>
 	</div>

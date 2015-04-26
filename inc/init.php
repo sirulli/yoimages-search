@@ -6,9 +6,15 @@ if (! defined ( 'ABSPATH' )) {
 if (! function_exists ( 'yoimg_search_load_styles_and_scripts' )) {
 	function yoimg_search_load_styles_and_scripts($hook) {
 		wp_enqueue_style ( 'yoimg-search-css', YOIMG_SEARCH_URL . '/css/yoimg-search.css' );
-		wp_enqueue_script ( 'yoimg-search-js', YOIMG_SEARCH_URL . '/js/yoimg-search.js', array (
-		'media-views'
-				), false, true );
+		wp_register_script ( 'yoimg-search-js', YOIMG_SEARCH_URL . '/js/yoimg-search.js', array (
+				'media-views' 
+		), false, true );
+		$translation_array = array (
+				'searchImagesTitle' => __ ( 'Search', YOIMG_DOMAIN ),
+				'uploadImageButton' =>  __ ( 'Upload', YOIMG_DOMAIN )
+		);
+		wp_localize_script ( 'yoimg-search-js', 'l10n', $translation_array );
+		wp_enqueue_script ( 'yoimg-search-js' );
 	}
 }
 
