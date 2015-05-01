@@ -100,6 +100,7 @@ jQuery(document).ready(function() {
 			},
 			doSearch : function() {
 				clearTimeout(this.searchTimeout);
+				this.model.set('yoimgSearchImages', []);
 				var searchQuery = this.model.get('yoimgSearchQuery');
 				this.searchTimeout = setTimeout(_.bind(function() {
 					if (searchQuery && searchQuery.length > 1 && searchQuery === this.model.get('yoimgSearchQuery')) {
