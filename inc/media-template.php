@@ -29,18 +29,22 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 			?>
 		</p>
 	</div>
-<# } else if ( data && data.foundImages && data.foundImages.length ) { #>
+<# } else if ( data && data.foundImages && data.foundImages.length ) {
+		var extraStyle = data.foundImages.length === 1 ? '-webkit-column-break-inside: avoid;-moz-column-break-inside: avoid;-o-column-break-inside: avoid;-ms-column-break-inside: avoid;column-break-inside: avoid;' : '';
+#>
 	<ul>
 		<# _.each( data.foundImages, function(image) {
 			var dataUrl = image.large_url;
 			#>
-			<li class="spinner yoimages-search-result" data-url="{{dataUrl}}">
+			<li class="spinner yoimages-search-result" data-url="{{dataUrl}}" style="{{extraStyle}}">
 				<img src="{{image.url}}" data-url="{{dataUrl}}" />
 				<a class="check" href="#" title="Deselect" data-url="{{dataUrl}}">
 					<div class="media-modal-icon" data-url="{{dataUrl}}"></div>
 				</a>
 			</li>
 		<# } ) #>
+		<li class="yoimages-search-result" />
+		<li class="yoimages-search-result" />
 	</ul>
 <# } #>
 	</script>
