@@ -17,14 +17,17 @@ jQuery(document).ready(function() {
 				}
 				this.model.on('change:yoimgSearchResults', this.showResults, this);
 				this.model.on('change:yoimgSearchFoundImages', this.render, this);
+				this.model.on('change:yoimgSearching', this.render, this);
 				this.model.on('change:yoimgSearchImages', this.refreshSelections, this);
 			},
 			prepare : function() {
 				var foundImages = this.model.get('yoimgSearchFoundImages');
 				var searchQuery = this.model.get('yoimgSearchQuery');
+				var searching = this.model.get('yoimgSearching');
 				var data = {
 					foundImages : foundImages,
-					searchQuery : searchQuery
+					searchQuery : searchQuery,
+					searching : searching
 				};
 				return data;
 			},
@@ -104,7 +107,7 @@ jQuery(document).ready(function() {
 				var searchQuery = this.model.get('yoimgSearchQuery');
 				this.searchTimeout = setTimeout(_.bind(function() {
 					if (searchQuery && searchQuery.length > 1 && searchQuery === this.model.get('yoimgSearchQuery')) {
-						var spinner = this.$('.yoimages-search-label .spinner').addClass('is-active');
+						this.model.set('yoimgSearching', true);
 						var model = this.model;
 						jQuery.ajax({
 							dataType : 'json',
@@ -129,7 +132,7 @@ jQuery(document).ready(function() {
 								});
 							},
 							complete : function() {
-								spinner.removeClass('is-active');
+								model.set('yoimgSearching', false);
 							}
 						});
 					}

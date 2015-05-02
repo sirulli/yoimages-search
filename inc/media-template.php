@@ -9,11 +9,14 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 	<script type="text/html" id="tmpl-yoimages-search">
 	<label class="yoimages-search-label">
 		<input type="text" name="yoimg-search-query" class="yoimg-search-query" value="{{ data.searchQuery }}" placeholder="<?php _e('Search free stock images from splashbase.co', YOIMG_DOMAIN); ?>" />
-		<span class="spinner" />
 	</label>
 	</script>
 	<script type="text/html" id="tmpl-yoimages-search-results">
-<# if ( data && data.foundImages === 0 ) { #>
+<# if ( data && data.searching) { #>
+	<div class="yoimages-search-label">
+		<span class="spinner is-active" />
+	</div>
+<# } else if ( data && data.foundImages === 0 ) { #>
 	<div class="yoimages-search-label error warning">
 		<p>
 			<?php
