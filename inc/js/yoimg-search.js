@@ -37,7 +37,7 @@ jQuery(document).ready(function() {
 				var results = this.model.get('yoimgSearchResults');
 				if (results && results.images && results.images.length > 0) {
 					this.model.set('yoimgSearchFoundImages', results.images);
-				} else if (results && results.errorThrown) {
+				} else if (results && results.textStatus) {
 					this.model.set('yoimgSearchFoundImages', results.textStatus);
 				} else {
 					this.model.set('yoimgSearchFoundImages', 0);
@@ -120,6 +120,9 @@ jQuery(document).ready(function() {
 								model.set('yoimgSearchResults', data);
 							},
 							error : function(jqXHR, textStatus, errorThrown) {
+								if (console) {
+									console.log('textStatus: ' + textStatus + ', errorThrown: ' + errorThrown);
+								}
 								model.set('yoimgSearchResults', {
 									textStatus : textStatus,
 									errorThrown : errorThrown
