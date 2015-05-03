@@ -65,6 +65,10 @@
 	position: relative;
 	visibility: visible;
 	opacity: 1;
+	-moz-column-span: 1;
+	-webkit-column-span: 1;
+	-ms-column-span: 1;
+	column-span: 1;
 }
 
 .yoimages-search-results ul li.yoimages-search-result.selected {
