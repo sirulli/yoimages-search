@@ -232,8 +232,6 @@ jQuery(document).ready(function() {
 				}));
 			},
 			yoimgSearchSelectCb : function(res) {
-				this.state().set('yoimgSearchSelecting', false);
-				this.content.view.$el.find('.yoimages-search-spinner').remove();
 				if (res && res.length) {
 					for (var i = 0; i < res.length; i++) {
 						var resItem = res[i];
@@ -243,12 +241,25 @@ jQuery(document).ready(function() {
 					}
 					this.state().updateSelection();
 					this.content.mode('browse');
-				} else {
-					// TODO handle error messages
 				}
 			},
+			yoimgSearchSelectCompleteCb : function() {
+				var model = this.state();
+				model.set('yoimgSearchImages', []);
+				model.set('yoimgSearchSelecting', false);
+				this.content.view.$el.find('.yoimages-search-spinner').remove();
+			},
+			yoimgSearchSelectErrorCb : function(jqXHR, textStatus, errorThrown) {
+				var model = this.state();
+				if (console) {
+					console.log('textStatus: ' + textStatus + ', errorThrown: ' + errorThrown);
+				}
+				model.set('yoimgSearchResults', {
+					textStatus : textStatus,
+					errorThrown : errorThrown
+				});
+			},
 			yoimgSearchSelect : function() {
-				console.log('TODO: handle errors');
 				var selectedImages = this.state().get('yoimgSearchImages');
 				if (selectedImages && selectedImages.length > 0) {
 					var data = {
@@ -258,7 +269,14 @@ jQuery(document).ready(function() {
 					};
 					this.state().set('yoimgSearchSelecting', true);
 					this.content.view.$el.find('.media-frame-toolbar .media-toolbar-primary.search-form').prepend('<span class="spinner is-active yoimages-search-spinner"></span>');
-					jQuery.post(ajaxurl, data, _.bind(this.yoimgSearchSelectCb, this));
+					jQuery.ajax({
+						type : 'POST',
+						url : ajaxurl,
+						data : data,
+						success : _.bind(this.yoimgSearchSelectCb, this),
+						complete : _.bind(this.yoimgSearchSelectCompleteCb, this),
+						error : _.bind(this.yoimgSearchSelectErrorCb, this)
+					});
 				}
 			}
 		});
