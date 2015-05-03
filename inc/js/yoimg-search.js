@@ -123,7 +123,7 @@ jQuery(document).ready(function() {
 							},
 							error : function(jqXHR, textStatus, errorThrown) {
 								if (console) {
-									console.log('textStatus: ' + textStatus + ', errorThrown: ' + errorThrown);
+									console.log('text status: ' + textStatus + ', error thrown: ' + errorThrown + ', error message from server: ' + jqXHR.responseText);
 								}
 								model.set('yoimgSearchResults', {
 									textStatus : textStatus,
@@ -252,7 +252,7 @@ jQuery(document).ready(function() {
 			yoimgSearchSelectErrorCb : function(jqXHR, textStatus, errorThrown) {
 				var model = this.state();
 				if (console) {
-					console.log('textStatus: ' + textStatus + ', errorThrown: ' + errorThrown);
+					console.log('text status: ' + textStatus + ', error thrown: ' + errorThrown + ', error message from server: ' + jqXHR.responseText);
 				}
 				model.set('yoimgSearchResults', {
 					textStatus : textStatus,
