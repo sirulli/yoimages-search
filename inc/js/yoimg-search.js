@@ -8,8 +8,7 @@ jQuery(document).ready(function() {
 			className : 'yoimages-search-results',
 			template : wp.media.template('yoimages-search-results'),
 			events : {
-				'click .yoimages-search-result' : 'selectImage',
-				'click .yoimages-search-result-sel' : 'selectImage'
+				'click .yoimages-search-result-container' : 'selectImage'
 			},
 			initialize : function() {
 				if (!this.model.get('yoimgSearchFoundImages')) {

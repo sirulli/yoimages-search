@@ -78,6 +78,12 @@
 	padding: 1%;
 }
 
+.yoimages-search-results .yoimages-search-result .yoimages-search-result-about
+	{
+	display: inline-block;
+	margin: 0 0 12px 6px;
+}
+
 .yoimages-search-results ul li.yoimages-search-result .check {
 	display: none;
 }

@@ -33,17 +33,20 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 		</p>
 	</div>
 <# } else if ( data && data.foundImages && data.foundImages.length ) {
-		var extraStyle = data.foundImages.length === 1 ? '-webkit-column-break-inside: avoid;-moz-column-break-inside: avoid;-o-column-break-inside: avoid;-ms-column-break-inside: avoid;column-break-inside: avoid;' : '';
+		var extraStyle = data.foundImages.length < 3 ? '-webkit-column-break-inside: avoid;-moz-column-break-inside: avoid;-o-column-break-inside: avoid;-ms-column-break-inside: avoid;column-break-inside: avoid;' : '';
 #>
 	<ul>
 		<# _.each( data.foundImages, function(image) {
 			var dataUrl = image.large_url;
 			#>
-			<li class="spinner yoimages-search-result" data-url="{{dataUrl}}" style="{{extraStyle}}">
-				<img src="{{image.url}}" data-url="{{dataUrl}}" />
-				<a class="check" href="#" title="Deselect" data-url="{{dataUrl}}">
-					<div class="media-modal-icon" data-url="{{dataUrl}}"></div>
-				</a>
+			<li class="spinner yoimages-search-result" style="{{extraStyle}}" data-url="{{dataUrl}}">
+				<div class="yoimages-search-result-container" data-url="{{dataUrl}}">
+					<img src="{{image.url}}" data-url="{{dataUrl}}" />
+					<a class="check" href="#" title="Deselect" data-url="{{dataUrl}}">
+						<div class="media-modal-icon" data-url="{{dataUrl}}"></div>
+					</a>
+				</div>
+				<span class="yoimages-search-result-about">copyright: {{image.copyright}}, site: {{image.site}} via <a href="http://www.splashbase.co/images/{{image.id}}" target="_blank">splashbase</a></span>
 			</li>
 		<# } ) #>
 		<li class="yoimages-search-result" />
