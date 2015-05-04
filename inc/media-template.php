@@ -46,7 +46,7 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 						<div class="media-modal-icon" data-url="{{dataUrl}}"></div>
 					</a>
 				</div>
-				<span class="yoimages-search-result-about">copyright: {{image.copyright}}, site: {{image.site}} via <a href="http://www.splashbase.co/images/{{image.id}}" target="_blank">splashbase</a></span>
+				<span class="yoimages-search-result-about"><?php _e('copyright', YOIMG_DOMAIN); ?>: {{image.copyright}}, <?php _e('site', YOIMG_DOMAIN); ?>: {{image.site}} <?php _e('via', YOIMG_DOMAIN); ?> <a href="http://www.splashbase.co/images/{{image.id}}" target="_blank">splashbase</a></span>
 			</li>
 		<# } ) #>
 		<li class="yoimages-search-result" />
