@@ -18,7 +18,7 @@ if (! function_exists ( 'yoimg_search_load_styles_and_scripts' )) {
 	}
 }
 
-if (is_admin ()) {
+if (is_admin () || php_sapi_name () == 'cli') {
 	define ( 'YOIMG_SEARCH_PATH', dirname ( __FILE__ ) );
 	define ( 'YOIMG_SEARCH_URL', plugins_url ( plugin_basename ( YOIMG_SEARCH_PATH ) ) );
 	define ( 'YOIMG_DEFAULT_SEARCH_ENABLED', TRUE );
