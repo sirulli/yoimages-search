@@ -32,14 +32,12 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 			?>
 		</p>
 	</div>
-<# } else if ( data && data.foundImages && data.foundImages.length ) {
-		var extraStyle = data.foundImages.length < 3 ? '-webkit-column-break-inside: avoid;-moz-column-break-inside: avoid;-o-column-break-inside: avoid;-ms-column-break-inside: avoid;column-break-inside: avoid;' : '';
-#>
+<# } else if ( data && data.foundImages && data.foundImages.length ) { #>
 	<ul>
 		<# _.each( data.foundImages, function(image) {
 			var dataUrl = image.large_url;
 			#>
-			<li class="spinner yoimages-search-result" style="{{extraStyle}}" data-url="{{dataUrl}}">
+			<li class="spinner yoimages-search-result" data-url="{{dataUrl}}">
 				<div class="yoimages-search-result-container" data-url="{{dataUrl}}">
 					<img src="{{image.url}}" data-url="{{dataUrl}}" />
 					<a class="check" href="#" title="Deselect" data-url="{{dataUrl}}">
