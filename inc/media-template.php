@@ -16,7 +16,8 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 	<div class="yoimages-search-label">
 		<span class="spinner is-active" />
 	</div>
-<# } else if ( data && data.foundImages === 0 ) { #>
+<# } else { #>
+<# if ( data && (data.foundImages === 0 || (data.foundImages && data.foundImages.images && data.foundImages.images.length === 0))) { #>
 	<div class="yoimages-search-label error warning">
 		<p>
 			<?php
@@ -24,17 +25,37 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 			?> <b>{{ data.searchQuery }}</b>
 		</p>
 	</div>
-<# } else if ( data && data.foundImages === 'error' ) { #>
+<# } #>
+<# if ( data && data.foundImages && data.foundImages.errors && data.foundImages.errors.length ) { #>
+	<# _.each( data.foundImages.errors, function(error) { #>
+	<div class="yoimages-search-label error">
+		<p>
+			<span>
+			<?php
+			_e('Cannot get results from:', YOIMG_DOMAIN);
+			?> <b>{{ error.source }}</b>.
+			</span>
+			<span>
+			<?php
+			_e('Please try again later or check the console logs for further information', YOIMG_DOMAIN);
+			?>
+			</span>
+		</p>
+	</div>
+	<# }) #>
+<# } #>
+<# if ( data && data.foundImages && data.foundImages.textStatus === 'no-search-providers' ) { #>
 	<div class="yoimages-search-label error">
 		<p>
 			<?php
-			_e('An error has occurred, please try again later or check the console logs for further information', YOIMG_DOMAIN);
+			_e('No search providers enabled, please select at least one search provider from the settings page', YOIMG_DOMAIN);
 			?>
 		</p>
 	</div>
-<# } else if ( data && data.foundImages && data.foundImages.length ) { #>
+<# } #>
+<# if ( data && data.foundImages && data.foundImages.images && data.foundImages.images.length ) { #>
 	<ul>
-		<# _.each( data.foundImages, function(image) {
+		<# _.each( data.foundImages.images, function(image) {
 			var dataUrl = image.large_url;
 			#>
 			<li class="spinner yoimages-search-result" data-url="{{dataUrl}}">
@@ -49,7 +70,9 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 		<# } ) #>
 		<li class="yoimages-search-result" />
 		<li class="yoimages-search-result" />
+		<li class="yoimages-search-result" />
 	</ul>
+<# } #>
 <# } #>
 	</script>
 	<?php

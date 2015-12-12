@@ -1,5 +1,37 @@
 //TODO: propagate search tab to all media library frames
 
+var splashbase = {
+	name : 'splashbase.co',
+	invoke : function(searchQuery, deferred) {
+		jQuery.ajax({
+			dataType : 'json',
+			url : 'http://www.splashbase.co/api/v1/images/search',
+			data : {
+				query : searchQuery
+			},
+			success : function(results) {
+				if (!results) {
+					results = {};
+				}
+				results.source = splashbase.name;
+				deferred.resolve(results);
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				var messageFromServer = jqXHR.responseText;
+				deferred.reject({
+					isError: true,
+					source : splashbase.name,
+					textStatus : textStatus,
+					errorThrown : errorThrown,
+					messageFromServer : messageFromServer
+				});
+			}
+		});
+	}
+};
+
+var YOIMG_SEARCH_PROVIDERS = [splashbase];
+
 jQuery(document).ready(function() {
 	if (wp && wp.media && wp.media.view && wp.media.view.MediaFrame && wp.media.view.MediaFrame.Select) {
 		window.originalWpMedia = wp.media;
@@ -37,10 +69,8 @@ jQuery(document).ready(function() {
 			},
 			showResults : function() {
 				var results = this.model.get('yoimgSearchResults');
-				if (results && results.images && results.images.length > 0) {
-					this.model.set('yoimgSearchFoundImages', results.images);
-				} else if (results && results.textStatus) {
-					this.model.set('yoimgSearchFoundImages', results.textStatus);
+				if (results) {
+					this.model.set('yoimgSearchFoundImages', results);
 				} else {
 					this.model.set('yoimgSearchFoundImages', 0);
 					this.render();
@@ -101,39 +131,65 @@ jQuery(document).ready(function() {
 				this.model.set('yoimgSearchQuery', event.target.value);
 			},
 			doSearch : function() {
-				clearTimeout(this.searchTimeout);
+				
+				function whenAll(deferreds) {
+					var lastResolved = 0;
+					var wrappedDeferreds = [];
+					for (var i = 0; i < deferreds.length; i++) {
+						wrappedDeferreds.push(jQuery.Deferred());
+						deferreds[i].always(function() {
+							wrappedDeferreds[lastResolved++].resolve(arguments);
+						});
+					}
+					return jQuery.when.apply(jQuery, wrappedDeferreds).promise();
+				};
+
+			    clearTimeout(this.searchTimeout);
 				this.model.set('yoimgSearchImages', []);
 				var searchQuery = this.model.get('yoimgSearchQuery');
 				this.searchTimeout = setTimeout(_.bind(function() {
 					if (searchQuery && searchQuery.length > 1 && searchQuery === this.model.get('yoimgSearchQuery')) {
 						this.model.set('yoimgSearching', true);
 						var model = this.model;
-						jQuery.ajax({
-							dataType : 'json',
-							url : 'http://www.splashbase.co/api/v1/images/search',
-							data : {
-								query : searchQuery
-							},
-							success : function(data) {
-								if (!data) {
-									data = {};
-								}
-								data.date = new Date();
-								model.set('yoimgSearchResults', data);
-							},
-							error : function(jqXHR, textStatus, errorThrown) {
-								if (console) {
-									console.log('text status: ' + textStatus + ', error thrown: ' + errorThrown + ', error message from server: ' + jqXHR.responseText);
-								}
-								model.set('yoimgSearchResults', {
-									textStatus : textStatus,
-									errorThrown : errorThrown
-								});
-							},
-							complete : function() {
+						
+						if (typeof YOIMG_SEARCH_PROVIDERS !== 'undefined' && YOIMG_SEARCH_PROVIDERS && YOIMG_SEARCH_PROVIDERS.length ) {
+							var deferreds = [];
+							_.each(YOIMG_SEARCH_PROVIDERS, function(provider) {
+								var d = jQuery.Deferred();
+								deferreds.push(d);
+							});
+							whenAll(deferreds).done(function() {
 								model.set('yoimgSearching', false);
-							}
-						});
+								var results = {
+									images : [],
+									errors : []
+								};
+								_.each(arguments, function(result) {
+									if (!result || result.length < 1) {
+										result = {};
+									} else if (result[0].images && result[0].images.length) {
+										results.images = results.images.concat(result[0].images);
+									} else if (result[0].isError) {
+										var failure = result[0];
+										if (console && console.error) {
+											console.error('source: ' + failure.source +  ', text status: ' + failure.textStatus + ', error thrown: ' + failure.errorThrown + ', error message from server: ' + failure.messageFromServer);
+										}
+										results.errors.push(failure);
+									}
+								});
+								results.date = new Date();
+								model.set('yoimgSearchResults', results);
+							});
+							_.each(YOIMG_SEARCH_PROVIDERS, function(provider, i) {
+								provider.invoke(searchQuery, deferreds[i]);
+							});
+						} else {
+							model.set('yoimgSearchResults', {
+								textStatus : 'no-search-providers'
+							});
+							model.set('yoimgSearching', false);
+						}
+
 					}
 				}, this), 1000);
 			},
