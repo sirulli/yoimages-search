@@ -1,36 +1,11 @@
 //TODO: propagate search tab to all media library frames
 
-var splashbase = {
-	name : 'splashbase.co',
-	invoke : function(searchQuery, deferred) {
-		jQuery.ajax({
-			dataType : 'json',
-			url : 'http://www.splashbase.co/api/v1/images/search',
-			data : {
-				query : searchQuery
-			},
-			success : function(results) {
-				if (!results) {
-					results = {};
-				}
-				results.source = splashbase.name;
-				deferred.resolve(results);
-			},
-			error : function(jqXHR, textStatus, errorThrown) {
-				var messageFromServer = jqXHR.responseText;
-				deferred.reject({
-					isError: true,
-					source : splashbase.name,
-					textStatus : textStatus,
-					errorThrown : errorThrown,
-					messageFromServer : messageFromServer
-				});
-			}
-		});
-	}
+var YOIMG_SEARCH_PROVIDERS = [];
+var YoimgSearch = {
+		registerProvider : function(provider) {
+			YOIMG_SEARCH_PROVIDERS.push(provider);
+		}
 };
-
-var YOIMG_SEARCH_PROVIDERS = [splashbase];
 
 jQuery(document).ready(function() {
 	if (wp && wp.media && wp.media.view && wp.media.view.MediaFrame && wp.media.view.MediaFrame.Select) {
