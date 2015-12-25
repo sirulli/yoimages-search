@@ -37,7 +37,7 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 			</span>
 			<span>
 			<?php
-			_e('Please try again later or check the console logs for further information', YOIMG_DOMAIN);
+			_e('An error has occurred, please try again later or check the console logs for further information', YOIMG_DOMAIN);
 			?>
 			</span>
 		</p>
