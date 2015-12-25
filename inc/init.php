@@ -5,12 +5,14 @@ if (! defined ( 'ABSPATH' )) {
 
 if (! function_exists ( 'yoimg_search_load_providers_scripts' )) {
 	function yoimg_search_load_providers_scripts() {
+		global $yoimg_search_providers;
 		if (YOIMG_SEARCH_ENABLED) {
 			$search_providers = apply_filters ( 'yoimg_search_providers', array () );
 			$providers_count = 0;
+			$yoimg_search_providers = $search_providers;
 			foreach ( $search_providers as $search_provider ) {
 				$provder_id = 'yoimg-search-provider' . $providers_count;
-				wp_register_script ( $provder_id, $search_provider, array (
+				wp_register_script ( $provder_id, $search_provider['js'], array (
 						'yoimg-search-js'
 				), false, true );
 				wp_enqueue_script ( $provder_id );
@@ -36,7 +38,20 @@ if (! function_exists ( 'yoimg_search_load_styles_and_scripts' )) {
 }
 
 function yoimg_search_load_splashbase_provider( $search_providers ) {
-	array_push( $search_providers, YOIMG_SEARCH_URL . '/js/providers/yoimg-search-splashbase.js' );
+	array_push( $search_providers, array(
+			'js' => YOIMG_SEARCH_URL . '/js/providers/yoimg-search-splashbase.js',
+			'url' => 'http://www.splashbase.co/',
+			'name' => 'Splashbase'
+	) );
+	return $search_providers;
+}
+
+function yoimg_search_load_unsplash_provider( $search_providers ) {
+	array_push( $search_providers, array(
+			'js' => YOIMG_SEARCH_URL . '/js/providers/yoimg-search-unsplash.js',
+			'url' => 'https://unsplash.com/',
+			'name' => 'Unsplash'
+	) );
 	return $search_providers;
 }
 
