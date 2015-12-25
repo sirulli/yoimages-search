@@ -40,6 +40,11 @@ function yoimg_search_load_splashbase_provider( $search_providers ) {
 	return $search_providers;
 }
 
+function yoimg_search_load_unsplash_provider( $search_providers ) {
+	array_push( $search_providers, YOIMG_SEARCH_URL . '/js/providers/yoimg-search-unsplash.js' );
+	return $search_providers;
+}
+
 if (is_admin () || php_sapi_name () == 'cli') {
 	define ( 'YOIMG_SEARCH_PATH', dirname ( __FILE__ ) );
 	define ( 'YOIMG_SEARCH_URL', plugins_url ( plugin_basename ( YOIMG_SEARCH_PATH ) ) );
@@ -48,6 +53,7 @@ if (is_admin () || php_sapi_name () == 'cli') {
 	define ( 'YOIMG_SEARCH_ENABLED', $yoimg_search_settings && isset ( $yoimg_search_settings ['search_is_active'] ) ? $yoimg_search_settings ['search_is_active'] : YOIMG_DEFAULT_SEARCH_ENABLED );
 	if (YOIMG_SEARCH_ENABLED) {
 		add_filter( 'yoimg_search_providers', 'yoimg_search_load_splashbase_provider' );
+		add_filter( 'yoimg_search_providers', 'yoimg_search_load_unsplash_provider' );
 		add_action ( 'admin_enqueue_scripts', 'yoimg_search_load_styles_and_scripts' );
 		add_action ( 'admin_enqueue_scripts', 'yoimg_search_load_providers_scripts' );
 		require_once (YOIMG_SEARCH_PATH . '/media-template.php');

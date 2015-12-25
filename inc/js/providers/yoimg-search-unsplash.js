@@ -1,25 +1,27 @@
 (function() {
-	var providerName = 'splashbase.co';
+	var providerName = 'unsplash.com';
 	YoimgSearch.registerProvider({
 		name : providerName,
 		invoke : function(searchQuery, deferred) {
 			jQuery.ajax({
 				dataType : 'json',
-				url : 'http://www.splashbase.co/api/v1/images/search',
+				url : 'https://api.unsplash.com/photos/search',
 				data : {
-					query : searchQuery
+					query : searchQuery,
+					client_id : '9ef2c07448af9026af654d8caade81260ef8682db05bded2483d83f104d48d33'
 				},
 				success : function(results) {
-					var images = results && results.images && results.images.length ? results.images.map(function(i, index) {
+					var images = results && results.length ? results.map(function(i, index) {
+						var author = i.user ? new YoimgSearchResultImageAuthor(i.user.name, i.user.username, i.user.links.html) : null;
 						return new YoimgSearchResultImage(
 								index,
-								i.copyright,
-								i.large_url,
-								i.site,
-								i.url,
+								null,
+								i.urls.full,
+								null,
+								i.urls.small,
 								providerName,
-								"http://www.splashbase.co/images/" + i.id,
-								null);
+								i.links.html,
+								author);
 					}) : [];
 					var out = new YoimgSearchResult(providerName, images);
 					deferred.resolve(out);

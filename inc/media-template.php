@@ -8,7 +8,7 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 		?>
 	<script type="text/html" id="tmpl-yoimages-search">
 	<label class="yoimages-search-label">
-		<input type="text" name="yoimg-search-query" class="yoimg-search-query" value="{{ data.searchQuery }}" placeholder="<?php _e('Search free stock images from www.splashbase.co', YOIMG_DOMAIN); ?>" />
+		<input type="text" name="yoimg-search-query" class="yoimg-search-query" value="{{ data.searchQuery }}" placeholder="<?php _e('Search free stock images from', YOIMG_DOMAIN); ?> {{ data.enabledSearchProviders }}" />
 	</label>
 	</script>
 	<script type="text/html" id="tmpl-yoimages-search-results">
@@ -33,7 +33,7 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 			<span>
 			<?php
 			_e('Cannot get results from:', YOIMG_DOMAIN);
-			?> <b>{{ error.source }}</b>.
+			?> <b>{{ error.providerName }}</b>.
 			</span>
 			<span>
 			<?php
@@ -56,7 +56,7 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 <# if ( data && data.foundImages && data.foundImages.images && data.foundImages.images.length ) { #>
 	<ul>
 		<# _.each( data.foundImages.images, function(image) {
-			var dataUrl = image.large_url;
+			var dataUrl = image.largeUrl;
 			#>
 			<li class="spinner yoimages-search-result" data-url="{{dataUrl}}">
 				<div class="yoimages-search-result-container" data-url="{{dataUrl}}">
@@ -65,7 +65,30 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 						<div class="media-modal-icon" data-url="{{dataUrl}}"></div>
 					</a>
 				</div>
-				<span class="yoimages-search-result-about"><?php _e('copyright', YOIMG_DOMAIN); ?>: {{image.copyright}}, <?php _e('site', YOIMG_DOMAIN); ?>: {{image.site}} <?php _e('via', YOIMG_DOMAIN); ?> <a href="http://www.splashbase.co/images/{{image.id}}" target="_blank">splashbase</a></span>
+				<span class="yoimages-search-result-about">
+					<# if ( image.copyright ) { #>
+					<?php _e('copyright', YOIMG_DOMAIN); ?>: {{image.copyright}}
+					<span class="yoimages-search-result-about-sep">/</span>
+					<# } #>
+					<# if ( image.originSite ) { #>
+					<?php _e('site', YOIMG_DOMAIN); ?>: {{image.originSite}}
+					<span class="yoimages-search-result-about-sep">/</span>
+					<# } #>
+					<# if ( image.link ) { #>
+					<?php _e('source', YOIMG_DOMAIN); ?>: <a href="{{image.link}}" target="_blank">{{image.providerName}}</a>
+					<span class="yoimages-search-result-about-sep">/</span>
+					<# } #>
+					<# if ( image.author && ( image.author.name || image.author.nickname ) ) { #>
+					<?php _e('author', YOIMG_DOMAIN); ?>: <a href="{{image.author.link}}" target="_blank">
+						<# if ( image.author.name ) { #>
+						{{image.author.name}}
+						<# } else { #>
+						{{image.author.nickname}}
+						<# } #>
+					</a>
+					<span class="yoimages-search-result-about-sep">/</span>
+					<# } #>
+				</span>
 			</li>
 		<# } ) #>
 		<li class="yoimages-search-result" />

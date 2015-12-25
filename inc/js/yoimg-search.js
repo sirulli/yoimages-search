@@ -7,7 +7,46 @@ var YoimgSearch = {
 		}
 };
 
+var YoimgSearchResult = function(providerName, images, error) {
+	this.providerName = providerName;
+	this.images = images;
+	this.error = error;
+};
+
+var YoimgSearchResultImage = function(index, copyright, largeUrl, originSite, url, providerName, link, author) {
+	this.index = index;
+	this.copyright = copyright;
+	this.largeUrl = largeUrl;
+	this.originSite = originSite;
+	this.url = url;
+	this.providerName = providerName;
+	this.link = link;
+	this.author = author;
+};
+
+var YoimgSearchResultImageAuthor = function(name, nickname, link) {
+	this.name = name;
+	this.nickname = nickname;
+	this.link = link;
+};
+
+var YoimgSearchResultError = function(textStatus, errorThrown, messageFromServer) {
+	this.textStatus = textStatus;
+	this.errorThrown = errorThrown;
+	this.messageFromServer = messageFromServer;
+};
+
 jQuery(document).ready(function() {
+	function getEnabledSearchProviders() {
+		var res = "";
+		for (var i = 0; i < YOIMG_SEARCH_PROVIDERS.length; i++) {
+			res += YOIMG_SEARCH_PROVIDERS[i].name + ", ";
+		}
+		if (res.length) {
+			res = res.substring(0, res.length - 2);
+		}
+		return res;
+	};
 	if (wp && wp.media && wp.media.view && wp.media.view.MediaFrame && wp.media.view.MediaFrame.Select) {
 		window.originalWpMedia = wp.media;
 		wp.media.view.YoimgSearchResults = wp.media.View.extend({
@@ -98,7 +137,8 @@ jQuery(document).ready(function() {
 			prepare : function() {
 				var searchQuery = this.model.get('yoimgSearchQuery');
 				var data = {
-					searchQuery : searchQuery
+					searchQuery : searchQuery,
+					enabledSearchProviders : getEnabledSearchProviders()
 				};
 				return data;
 			},
@@ -144,13 +184,22 @@ jQuery(document).ready(function() {
 										result = {};
 									} else if (result[0].images && result[0].images.length) {
 										results.images = results.images.concat(result[0].images);
-									} else if (result[0].isError) {
-										var failure = result[0];
+									} else if (result[0].error) {
+										var failure = result[0].error;
 										if (console && console.error) {
-											console.error('source: ' + failure.source +  ', text status: ' + failure.textStatus + ', error thrown: ' + failure.errorThrown + ', error message from server: ' + failure.messageFromServer);
+											console.error('source: ' + result[0].providerName +  ', text status: ' + failure.textStatus + ', error thrown: ' + failure.errorThrown + ', error message from server: ' + failure.messageFromServer);
 										}
-										results.errors.push(failure);
+										results.errors.push(result[0]);
 									}
+								});
+								results.images.sort(function (a, b) {
+									if (a.index > b.index) {
+										return 1;
+									}
+									if (a.index < b.index) {
+										return -1;
+									}
+									return 0;
 								});
 								results.date = new Date();
 								model.set('yoimgSearchResults', results);
