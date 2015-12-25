@@ -37,29 +37,28 @@ if (! function_exists ( 'yoimg_search_load_styles_and_scripts' )) {
 	}
 }
 
-function yoimg_search_load_splashbase_provider( $search_providers ) {
-	array_push( $search_providers, array(
-			'js' => YOIMG_SEARCH_URL . '/js/providers/yoimg-search-splashbase.js',
-			'url' => 'http://www.splashbase.co/',
-			'name' => 'Splashbase'
-	) );
-	return $search_providers;
+if (! function_exists ( 'yoimg_search_load_splashbase_provider' )) {
+	function yoimg_search_load_splashbase_provider( $search_providers ) {
+		array_push( $search_providers, array(
+				'js' => YOIMG_SEARCH_URL . '/js/providers/yoimg-search-splashbase.js',
+				'url' => 'http://www.splashbase.co/',
+				'name' => 'Splashbase'
+		) );
+		return $search_providers;
+	}
 }
 
-function yoimg_search_load_unsplash_provider( $search_providers ) {
-	array_push( $search_providers, array(
-			'js' => YOIMG_SEARCH_URL . '/js/providers/yoimg-search-unsplash.js',
-			'url' => 'https://unsplash.com/',
-			'name' => 'Unsplash'
-	) );
-	return $search_providers;
+if (! function_exists ( 'yoimg_search_load_unsplash_provider' )) {
+	function yoimg_search_load_unsplash_provider( $search_providers ) {
+		array_push( $search_providers, array(
+				'js' => YOIMG_SEARCH_URL . '/js/providers/yoimg-search-unsplash.js',
+				'url' => 'https://unsplash.com/',
+				'name' => 'Unsplash'
+		) );
+		return $search_providers;
+	}
 }
-
-function yoimg_search_load_unsplash_provider( $search_providers ) {
-	array_push( $search_providers, YOIMG_SEARCH_URL . '/js/providers/yoimg-search-unsplash.js' );
-	return $search_providers;
-}
-
+	
 if (is_admin () || php_sapi_name () == 'cli') {
 	define ( 'YOIMG_SEARCH_PATH', dirname ( __FILE__ ) );
 	define ( 'YOIMG_SEARCH_URL', plugins_url ( plugin_basename ( YOIMG_SEARCH_PATH ) ) );
