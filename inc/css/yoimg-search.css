@@ -35,6 +35,10 @@
 	top: 74px;
 }
 
+.yoimages-search-results h3 {
+	padding: 0 1.5%;
+}
+
 .yoimages-search-results ul {
 	margin: 0;
 	padding: 0 1%;
@@ -161,4 +165,8 @@
 .yoimages-search-label .spinner.is-active, .media-frame .spinner.yoimages-search-spinner.is-active
 	{
 	display: inline-block;
+}
+
+.media-modal-content .media-toolbar-primary.search-form.yoimg-media-toolbar {
+    width: auto;
 }

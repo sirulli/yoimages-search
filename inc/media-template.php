@@ -59,7 +59,7 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 		if ( page && page.length ) {
 			if ( i ) {
 			#>
-			<span><?php _e('Page', YOIMG_DOMAIN); ?>: {{ (i + 1) }}</span>
+			<h3><?php _e('Page', YOIMG_DOMAIN); ?>: {{ (i + 1) }}</h3>
 			<#
 			}
 		#>
@@ -106,6 +106,11 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 	</ul>
 	<# } #>
 	<# } ) #>
+	<# if ( data && data.loading) { #>
+	<div class="yoimages-search-label">
+		<span class="spinner is-active" />
+	</div>
+	<# } #>
 	</div>
 <# } #>
 <# } #>

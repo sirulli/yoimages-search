@@ -151,16 +151,19 @@ jQuery(document).ready(function() {
 				this.model.on('change:yoimgSearchResults', this.showResults, this);
 				this.model.on('change:yoimgSearchFoundImages', this.render, this);
 				this.model.on('change:yoimgSearching', this.render, this);
+				this.model.on('change:yoimgSearchLoading', this.render, this);
 				this.model.on('change:yoimgSearchImages', this.refreshSelections, this);
 			},
 			prepare : function() {
 				var foundImages = this.model.get('yoimgSearchFoundImages');
 				var searchQuery = this.model.get('yoimgSearchQuery');
 				var searching = this.model.get('yoimgSearching');
+				var loading = this.model.get('yoimgSearchLoading');
 				var data = {
 					foundImages : foundImages,
 					searchQuery : searchQuery,
-					searching : searching
+					searching : searching,
+					loading : loading
 				};
 				return data;
 			},
@@ -369,6 +372,7 @@ jQuery(document).ready(function() {
 				model.set('yoimgSearchImages', []);
 				model.set('yoimgSearchSelecting', false);
 				this.content.view.$el.find('.yoimages-search-spinner').remove();
+				this.content.view.$el.find('.media-frame-toolbar .media-toolbar-primary.search-form').removeClass('yoimg-media-toolbar');
 			},
 			yoimgSearchSelectErrorCb : function(jqXHR, textStatus, errorThrown) {
 				var model = this.state();
@@ -389,7 +393,7 @@ jQuery(document).ready(function() {
 						'imagesUrls' : selectedImages
 					};
 					this.state().set('yoimgSearchSelecting', true);
-					this.content.view.$el.find('.media-frame-toolbar .media-toolbar-primary.search-form').prepend('<span class="spinner is-active yoimages-search-spinner"></span>');
+					this.content.view.$el.find('.media-frame-toolbar .media-toolbar-primary.search-form').addClass('yoimg-media-toolbar').prepend('<span class="spinner is-active yoimages-search-spinner"></span>');
 					jQuery.ajax({
 						type : 'POST',
 						url : ajaxurl,
