@@ -2,7 +2,7 @@
 	var providerName = 'splashbase.co';
 	YoimgSearch.registerProvider({
 		name : providerName,
-		invoke : function(searchQuery, deferred) {
+		invoke : function(searchQuery, deferred, opts) {
 			jQuery.ajax({
 				dataType : 'json',
 				url : 'http://www.splashbase.co/api/v1/images/search',
@@ -10,7 +10,7 @@
 					query : searchQuery
 				},
 				success : function(results) {
-					var images = results && results.images && results.images.length ? results.images.map(function(i, index) {
+					var images = results && results.images && results.images.length > opts.itemsPerPage * opts.page ? results.images.slice(opts.itemsPerPage * opts.page, (opts.itemsPerPage * opts.page) + opts.itemsPerPage).map(function(i, index) {
 						return new YoimgSearchResultImage(
 								index,
 								i.copyright,

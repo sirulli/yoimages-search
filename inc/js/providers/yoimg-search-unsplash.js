@@ -2,12 +2,14 @@
 	var providerName = 'unsplash.com';
 	YoimgSearch.registerProvider({
 		name : providerName,
-		invoke : function(searchQuery, deferred) {
+		invoke : function(searchQuery, deferred, opts) {
 			jQuery.ajax({
 				dataType : 'json',
 				url : 'https://api.unsplash.com/photos/search',
 				data : {
 					query : searchQuery,
+					page : opts.page + 1,
+					per_page : opts.itemsPerPage,
 					client_id : '9ef2c07448af9026af654d8caade81260ef8682db05bded2483d83f104d48d33'
 				},
 				success : function(results) {

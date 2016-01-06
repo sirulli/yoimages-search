@@ -54,8 +54,17 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 	</div>
 <# } #>
 <# if ( data && data.foundImages && data.foundImages.images && data.foundImages.images.length ) { #>
+	<div class="yoimages-search-results-inner">
+	<# _.each( data.foundImages.images, function(page, i) {
+		if ( page && page.length ) {
+			if ( i ) {
+			#>
+			<span><?php _e('Page', YOIMG_DOMAIN); ?>: {{ (i + 1) }}</span>
+			<#
+			}
+		#>
 	<ul>
-		<# _.each( data.foundImages.images, function(image) {
+		<# _.each( page, function(image) {
 			var dataUrl = image.largeUrl;
 			#>
 			<li class="spinner yoimages-search-result" data-url="{{dataUrl}}">
@@ -95,6 +104,9 @@ if (! function_exists ( 'yoimg_search_print_media_templates' )) {
 		<li class="yoimages-search-result" />
 		<li class="yoimages-search-result" />
 	</ul>
+	<# } #>
+	<# } ) #>
+	</div>
 <# } #>
 <# } #>
 	</script>
