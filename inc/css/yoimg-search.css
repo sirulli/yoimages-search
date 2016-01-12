@@ -44,10 +44,13 @@
 	padding: 0 1%;
 	-moz-column-count: 1;
 	-moz-column-gap: 0;
+	-moz-column-fill: balance;
 	-webkit-column-count: 1;
 	-webkit-column-gap: 0;
+	-webkit-column-fill: balance;
 	column-count: 1;
 	column-gap: 0;
+	column-fill: balance;
 	width: 98%;
 }
 
@@ -93,7 +96,8 @@
 	-webkit-column-break-inside: avoid;
 	page-break-inside: avoid;
 	break-inside: avoid;
-	display: table;
+	display: inline-block;
+	float: none;
 }
 
 .yoimages-search-results ul li.yoimages-search-result.selected {
@@ -105,6 +109,7 @@
 	width: 98%;
 	cursor: pointer;
 	padding: 1%;
+	display: inline-block;
 }
 
 .yoimages-search-results .yoimages-search-result .yoimages-search-result-about

@@ -246,7 +246,7 @@ jQuery(document).ready(function() {
 				};
 				return data;
 			},
-			newSearchQuery : function() {
+			newSearchQuery : function(event) {
 				this.model.set('yoimgSearchQuery', event.target.value);
 			},
 			doSearch : function() {
