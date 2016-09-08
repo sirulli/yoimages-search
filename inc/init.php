@@ -72,6 +72,6 @@ if (is_admin () || php_sapi_name () == 'cli') {
 		add_action ( 'admin_enqueue_scripts', 'yoimg_search_load_providers_scripts' );
 		require_once (YOIMG_SEARCH_PATH . '/media-template.php');
 		require_once (YOIMG_SEARCH_PATH . '/image-uploader.php');
-		require_once (YOIMG_SEARCH_PATH . '/extend-yoimg-settings.php');
 	}
+	require_once (YOIMG_SEARCH_PATH . '/extend-yoimg-settings.php');
 }
