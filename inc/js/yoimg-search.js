@@ -356,16 +356,25 @@ jQuery(document).ready(function() {
 				}));
 			},
 			yoimgSearchSelectCb : function(res) {
-				if (res && res.length) {
+				var state = this.state();
+				if (res && res.length && state) {
+					var attachments = [];
+					var selection = state.get('selection');
+					if (state.id !== 'featured-image') {
+						state.get('library').observe( selection );
+					}
 					for (var i = 0; i < res.length; i++) {
 						var resItem = res[i];
-						// TODO it's specific for featured image: make it more
-						// general!
-						wp.media.view.settings.post.featuredImageId = resItem.imageId;
+						var id = resItem.imageId;
+						if ( '' !== id && -1 !== id ) {
+							var attachment = wp.media.model.Attachment.get( id );
+							attachment.fetch();
+							attachments.push(attachment);
+						}
 					}
-					this.state().updateSelection();
-					this.content.mode('browse');
+					selection.reset( attachments );
 				}
+				this.content.mode('browse');
 			},
 			yoimgSearchSelectCompleteCb : function() {
 				var model = this.state();
