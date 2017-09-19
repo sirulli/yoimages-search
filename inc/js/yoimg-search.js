@@ -281,16 +281,21 @@ jQuery(document).ready(function() {
 				this.views.set([ this.search, this.results ]);
 			},
 			dispose : function() {
-				this._toolbar.options = _.clone(this._defaultToolbarOptions);
+				if (this._toolbar) {
+					this._toolbar.options = _.clone(this._defaultToolbarOptions);
+				}
 				this.model.set('yoimgSearchActive', false);
 				return wp.media.View.prototype.dispose.apply(this, arguments);
 			},
 			render : function() {
-				this._toolbar = this.controller.views.get('.media-frame-toolbar')[0];
-				this._defaultToolbarOptions = _.clone(this._toolbar.options);
-				this._toolbar.options.event = 'yoimg-search-select';
-				this._toolbar.options.text = l10n.uploadImageButton;
-				this._toolbar.options.close = false;
+				var mediaFrameToolbar = this.controller.views.get('.media-frame-toolbar');
+				if (mediaFrameToolbar) {
+					this._toolbar = mediaFrameToolbar[0];
+					this._defaultToolbarOptions = _.clone(this._toolbar.options);
+					this._toolbar.options.event = 'yoimg-search-select';
+					this._toolbar.options.text = l10n.uploadImageButton;
+					this._toolbar.options.close = false;
+				}
 				this.model.set('yoimgSearchActive', true);
 				return wp.media.View.prototype.render.apply(this, arguments);
 			}
@@ -327,7 +332,7 @@ jQuery(document).ready(function() {
 				});
 			}
 		});
-		wp.media.view.MediaFrame.SelectWithYoimgSearch = wp.media.view.MediaFrame.Select.extend({
+		var argsSelectWithYoimgSearch = {
 			bindHandlers : function() {
 				this.on('content:render:yosearch', this.yoimgSearch, this);
 				this.on('yoimg-search-select', this.yoimgSearchSelect, this);
@@ -413,7 +418,10 @@ jQuery(document).ready(function() {
 					});
 				}
 			}
-		});
+		};
+		wp.media.view.MediaFrame.SelectWithYoimgSearch = wp.media.view.MediaFrame.Select.extend(argsSelectWithYoimgSearch);
+		var argsPostWithYoimgSearch = {};
+		wp.media.view.MediaFrame.PostWithYoimgSearch = wp.media.view.MediaFrame.Post.extend(argsPostWithYoimgSearch);
 		var mediaWithYoimgSearch = function(attributes) {
 			var originalAttrs = _.clone(attributes);
 			originalAttrs = _.defaults(originalAttrs || {}, {
@@ -423,6 +431,9 @@ jQuery(document).ready(function() {
 			if ('select' === originalAttrs.frame && wp.media.view.MediaFrame.SelectWithYoimgSearch) {
 				attributes = originalAttrs;
 				frame = new wp.media.view.MediaFrame.SelectWithYoimgSearch(attributes);
+			} else if ('post' === originalAttrs.frame) {
+				attributes = originalAttrs;
+				frame = new wp.media.view.MediaFrame.PostWithYoimgSearch(attributes);
 			}
 			delete attributes.frame;
 			wp.media.frame = frame;
