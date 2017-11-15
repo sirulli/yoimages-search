@@ -1,5 +1,6 @@
 //TODO: propagate search tab to all media library frames
 
+var YOIMG_SEARCH_STATES = ['insert', 'gallery', 'featured-image'];
 var YOIMG_SEARCH_PROVIDERS = [];
 var YOIMG_SEARCH_MAX_ITEMS_PER_PAGE = 20;
 var YOIMG_SEARCH_ITEMS_PER_PAGE;
@@ -284,20 +285,65 @@ jQuery(document).ready(function() {
 				if (this._toolbar) {
 					this._toolbar.options = _.clone(this._defaultToolbarOptions);
 				}
+				if (this.controller.views.get('.media-frame-toolbar') &&
+					this.controller.views.get('.media-frame-toolbar').length == 1) {
+					var toolbar = this.controller.views.get('.media-frame-toolbar')[0];
+					if (toolbar && toolbar.$el) {
+						toolbar.$el.removeClass('yoimgSearchActive');
+					}
+					if (toolbar.get('yoimgInsert')) {
+						toolbar.unset('yoimgInsert');
+					}
+				}
 				this.model.set('yoimgSearchActive', false);
 				return wp.media.View.prototype.dispose.apply(this, arguments);
 			},
 			render : function() {
 				var mediaFrameToolbar = this.controller.views.get('.media-frame-toolbar');
-				if (mediaFrameToolbar) {
+				if (mediaFrameToolbar && mediaFrameToolbar.length === 1) {
 					this._toolbar = mediaFrameToolbar[0];
 					this._defaultToolbarOptions = _.clone(this._toolbar.options);
-					this._toolbar.options.event = 'yoimg-search-select';
-					this._toolbar.options.text = l10n.uploadImageButton;
-					this._toolbar.options.close = false;
+					if (this._toolbar && this._toolbar.$el) {
+						this._toolbar.$el.addClass('yoimgSearchActive');
+					}
+					this._toolbar.set( 'yoimgInsert', new wp.media.view.Button.YoimgSearchButton({
+						state: this.controller.state()
+					}));
 				}
 				this.model.set('yoimgSearchActive', true);
 				return wp.media.View.prototype.render.apply(this, arguments);
+			}
+		});
+		wp.media.view.Button.YoimgSearchButton = wp.media.view.Button.extend({
+			events: {
+				'click': 'click'
+			},
+			defaults: {
+				style: 'primary',
+				text: l10n.uploadImageButton,
+				size: 'large',
+				disabled: true
+			},
+			initialize: function(options) {
+				wp.media.view.Button.prototype.initialize.call(this);
+				var state = options.state;
+				state.on('change:yoimgSearchActive', this.refresh, this);
+				state.on('change:yoimgSearchImages', this.refresh, this);
+				state.on('change:yoimgSearchSelecting', this.refresh, this);
+			},
+			refresh: function() {
+				var state = this.controller.state();
+				var yoimgSearchActive = state.get('yoimgSearchActive') === true;
+				if (yoimgSearchActive) {
+					var selectedImages = state.get('yoimgSearchImages');
+					var selectingImages = state.get('yoimgSearchSelecting');
+					var active = selectedImages && selectedImages.length && !selectingImages;
+					this.$el.attr('disabled', !active);
+				}
+			},
+			click: function(event) {
+				event.preventDefault();
+				this.controller.trigger('yoimg-search-select');
 			}
 		});
 		wp.media.view.Toolbar.SelectWithYoimgSearch = wp.media.view.Toolbar.Select.extend({
@@ -310,56 +356,10 @@ jQuery(document).ready(function() {
 			},
 			refresh : function() {
 				wp.media.view.Toolbar.Select.prototype.refresh.call(this);
-				var state = this.controller.state();
-				var yoimgSearchActive = state.get('yoimgSearchActive') === true;
-				if (yoimgSearchActive) {
-					var selectedImages = state.get('yoimgSearchImages');
-					var selectingImages = state.get('yoimgSearchSelecting');
-					var active = selectedImages && selectedImages.length && !selectingImages;
-					_.each(this._views, function(button) {
-						if (!button.model || !button.options || !button.options.requires) {
-							return;
-						}
-						button.model.set('disabled', !active);
-					});
-				}
-				var text = this.options.text;
-				_.each(this._views, function(button) {
-					if (!button || !button.model) {
-						return;
-					}
-					button.model.set('text', text);
-				});
 			}
 		});
-		var argsSelectWithYoimgSearch = {
-			bindHandlers : function() {
-				this.on('content:render:yosearch', this.yoimgSearch, this);
-				this.on('yoimg-search-select', this.yoimgSearchSelect, this);
-				wp.media.view.MediaFrame.Select.prototype.bindHandlers.call(this);
-			},
-			browseRouter : function(routerView) {
-				wp.media.view.MediaFrame.Select.prototype.browseRouter.call(this, routerView);
-				routerView.set({
-					yosearch : {
-						text : l10n.searchImagesTitle,
-						priority : 60
-					}
-				});
-			},
-			createSelectToolbar : function(toolbar, options) {
-				options = options || this.options.button || {};
-				options.controller = this;
-				toolbar.view = new wp.media.view.Toolbar.SelectWithYoimgSearch(options);
-			},
-			yoimgSearch : function() {
-				this.$el.removeClass('hide-toolbar');
-				this.content.set(new wp.media.view.YoimgSearch({
-					controller : this,
-					model : this.state(),
-					options : this.options
-				}));
-			},
+
+		var argsYoimgSearch = {
 			yoimgSearchSelectCb : function(res) {
 				var state = this.state();
 				if (res && res.length && state) {
@@ -419,8 +419,73 @@ jQuery(document).ready(function() {
 				}
 			}
 		};
+
+		var argsSelectWithYoimgSearch = {
+			bindHandlers : function() {
+				this.on('content:render:yosearch', this.yoimgSearch, this);
+				this.on('yoimg-search-select', this.yoimgSearchSelect, this);
+				wp.media.view.MediaFrame.Select.prototype.bindHandlers.call(this);
+			},
+			browseRouter : function(routerView) {
+				wp.media.view.MediaFrame.Select.prototype.browseRouter.call(this, routerView);
+				routerView.set({
+					yosearch : {
+						text : l10n.searchImagesTitle,
+						priority : 60
+					}
+				});
+			},
+			yoimgSearch : function() {
+				this.$el.removeClass('hide-toolbar');
+				this.content.set(new wp.media.view.YoimgSearch({
+					controller : this,
+					model : this.state(),
+					options : this.options
+				}));
+			},
+			createSelectToolbar : function(toolbar, options) {
+				options = options || this.options.button || {};
+				options.controller = this;
+				toolbar.view = new wp.media.view.Toolbar.SelectWithYoimgSearch(options);
+			}
+		};
+		jQuery.extend(argsSelectWithYoimgSearch, argsYoimgSearch);
+
+		var argsPostWithYoimgSearch = {
+			bindHandlers : function() {
+				this.on('content:render:yosearch', this.yoimgSearch, this);
+				this.on('yoimg-search-select', this.yoimgSearchSelect, this);
+				wp.media.view.MediaFrame.Post.prototype.bindHandlers.call(this);
+			},
+			browseRouter : function(routerView) {
+				wp.media.view.MediaFrame.Post.prototype.browseRouter.call(this, routerView);
+				if (this.state() && this.state().id && _.contains(YOIMG_SEARCH_STATES, this.state().id)) {
+					routerView.set({
+						yosearch : {
+							text : l10n.searchImagesTitle,
+							priority : 60
+						}
+					});
+				}
+			},
+			yoimgSearch : function() {
+				if (_.contains(YOIMG_SEARCH_STATES, this.state().id)) {
+					this.content.set(new wp.media.view.YoimgSearch({
+						controller : this,
+						model : this.state(),
+						options : this.options
+					}));
+				} else {
+					this.content.mode('browse');
+				}
+			},
+			mainInsertToolbar: function(view) {
+				wp.media.view.MediaFrame.Post.prototype.mainInsertToolbar.call(this, view);
+			}
+		};
+		jQuery.extend(argsPostWithYoimgSearch, argsYoimgSearch);
+
 		wp.media.view.MediaFrame.SelectWithYoimgSearch = wp.media.view.MediaFrame.Select.extend(argsSelectWithYoimgSearch);
-		var argsPostWithYoimgSearch = {};
 		wp.media.view.MediaFrame.PostWithYoimgSearch = wp.media.view.MediaFrame.Post.extend(argsPostWithYoimgSearch);
 		var mediaWithYoimgSearch = function(attributes) {
 			var originalAttrs = _.clone(attributes);

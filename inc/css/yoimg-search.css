@@ -175,3 +175,15 @@
 .media-modal-content .media-toolbar-primary.search-form.yoimg-media-toolbar {
     width: auto;
 }
+
+.media-modal-content .media-toolbar.yoimgSearchActive .media-selection,
+.media-modal-content .media-toolbar.yoimgSearchActive .media-button-insert,
+.media-modal-content .media-toolbar.yoimgSearchActive .media-button-select,
+.media-modal-content .media-toolbar.yoimgSearchActive .media-button-gallery,
+.yoimgSearchButton {
+	display: none;
+}
+
+.media-modal-content .media-toolbar.yoimgSearchActive .yoimgSearchButton {
+	display: block;
+}
