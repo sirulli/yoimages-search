@@ -210,7 +210,7 @@ jQuery(document).ready(function() {
 			},
 			addImage : function(imgUrl) {
 				var selectedImages = _.clone(this.model.get('yoimgSearchImages'));
-				if (!this.options.multiple) {
+				if (!this.controller.options.multiple || !this.model.attributes.multiple) {
 					selectedImages = [];
 				}
 				selectedImages.push(imgUrl);
@@ -276,8 +276,7 @@ jQuery(document).ready(function() {
 				}).render();
 				this.results = new wp.media.view.YoimgSearchResults({
 					controller : this.controller,
-					model : this.model,
-					options : this.options
+					model : this.model
 				}).render();
 				this.views.set([ this.search, this.results ]);
 			},
@@ -439,8 +438,7 @@ jQuery(document).ready(function() {
 				this.$el.removeClass('hide-toolbar');
 				this.content.set(new wp.media.view.YoimgSearch({
 					controller : this,
-					model : this.state(),
-					options : this.options
+					model : this.state()
 				}));
 			},
 			createSelectToolbar : function(toolbar, options) {
@@ -472,8 +470,7 @@ jQuery(document).ready(function() {
 				if (_.contains(YOIMG_SEARCH_STATES, this.state().id)) {
 					this.content.set(new wp.media.view.YoimgSearch({
 						controller : this,
-						model : this.state(),
-						options : this.options
+						model : this.state()
 					}));
 				} else {
 					this.content.mode('browse');
